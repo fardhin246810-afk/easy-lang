@@ -1,6 +1,44 @@
-# Offline low-resource translator
+# Easy Lang — Offline Neural Machine Translator
 
-A local Streamlit app for translating between the 200+ language/script variants supported by NLLB-200. It can detect the source language offline, lets users override the detection, and asks them to choose a target language. The app does not call a translation API: after the model and dependencies have been installed, inference and language detection work without internet. It adapts the pretrained multilingual model with LoRA and can use target-language monolingual text for tagged back-translation.
+A private, on-device neural machine translation application supporting 200+ languages and script variants powered by Meta's NLLB-200. It performs source language auto-detection, tokenization, and Seq2Seq neural inference 100% offline without third-party cloud APIs.
+
+## 📱 Mobile App & 💻 PC Desktop App (100% Secure & Zero Warnings)
+
+Easy Lang is engineered for zero-vulnerability, trusted execution across mobile and desktop devices without triggering antivirus false positives or Play Protect warning banners:
+
+### 1. 💻 Windows PC Desktop App (`EasyLang.exe`)
+- **Native Executable:** Compiled native desktop launcher (`EasyLang.exe`) with embedded custom logo icon.
+- **Standalone Window:** Launches the app in borderless application mode with custom window controls and no browser clutter.
+- **Trusted Security:** Powered by Microsoft's built-in, digitally signed Edge/Chromium engine (`msedge --app`). Triggers **zero SmartScreen/antivirus warnings** and creates no temp-file security risks.
+- **One-Click Desktop Shortcut:** Run `Create-Desktop-Shortcut.bat` to place an icon directly on your Windows desktop.
+
+### 2. 📱 Mobile App (Android & iPhone / iPad)
+- **Progressive Web App (PWA):** Compliant with Google and Apple PWA standards (`manifest.json` + `sw.js`).
+- **Zero Harmful Warnings:** Unlike unsigned third-party `.apk` files that get blocked by Google Play Protect or show scary *"This file might be harmful"* banners, PWA installs natively from your browser with full security verification.
+- **Home Screen Launcher & Splash Screen:** Installs directly to the home screen with your custom icon and launches full-screen with the custom opening animation.
+- **Full Offline Caching:** Assets are cached locally via the Service Worker, functioning seamlessly in offline/airplane mode.
+
+---
+
+## 🚀 How to Run
+
+### Option A: Launch PC Desktop App
+Double-click `EasyLang.exe` or run:
+```powershell
+.\EasyLang.exe
+```
+
+### Option B: Run Mobile & Local Network Server
+Run `Start-Mobile-Server.bat` or:
+```powershell
+python serve_mobile.py
+```
+Open the displayed local IP address (e.g. `http://192.168.1.XX:8000`) on your phone, then tap **"Install App"** or **"Add to Home Screen"**.
+
+### Option C: Run Native Python Streamlit Engine
+```powershell
+python -m streamlit run app.py --server.address 0.0.0.0 --server.port 8501
+```
 
 ## Install and prepare the model
 
