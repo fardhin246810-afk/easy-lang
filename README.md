@@ -31,7 +31,7 @@ Double-click `EasyLang.exe` or run:
 ### Option B: Run Mobile & Local Network Server
 Run `Start-Mobile-Server.bat` or:
 ```powershell
-python serve_mobile.py
+python api_server.py
 ```
 Open the displayed local IP address (e.g. `http://192.168.1.XX:8000`) on your phone, then tap **"Install App"** or **"Add to Home Screen"**.
 
