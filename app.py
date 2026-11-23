@@ -41,6 +41,10 @@ if "source_text" not in st.session_state:
 if "translated_text" not in st.session_state:
     st.session_state.translated_text = ""
 
+def clear_translation():
+    st.session_state.source_text = ""
+    st.session_state.translated_text = ""
+
 left, right = st.columns(2)
 with left:
     source_mode = st.radio("From", ["Detect language", "Choose language"], horizontal=True, key="source_mode")
@@ -58,10 +62,7 @@ col_button, col_clear = st.columns([3, 1])
 with col_button:
     translate_clicked = st.button("Translate", type="primary", use_container_width=True)
 with col_clear:
-    if st.button("Clear", use_container_width=True):
-        st.session_state.source_text = ""
-        st.session_state.translated_text = ""
-        st.rerun()
+    st.button("Clear", use_container_width=True, on_click=clear_translation)
 
 if translate_clicked:
     text = st.session_state.source_text.strip()
