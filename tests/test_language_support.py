@@ -39,6 +39,9 @@ class LanguageSupportTests(unittest.TestCase):
             with self.subTest(expected_code=expected_code):
                 self.assertEqual(detect_nllb_language(text, self.codes), expected_code)
 
+    def test_unsupported_language_returns_none(self):
+        self.assertIsNone(detect_nllb_language("This is a long English sentence.", ("hin_Deva",)))
+
     def test_short_text_requests_manual_language_selection(self):
         self.assertIsNone(detect_nllb_language("Hi", self.codes))
 
