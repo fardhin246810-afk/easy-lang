@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Easy Lang · Offfline translator</title>
+  <title>Easy Lang · Offline translator</title>
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
@@ -784,7 +784,7 @@
       </div>
       <div class="st-splash-brand">
         <h1 class="st-splash-title">Easy Lang</h1>
-        <div class="st-splash-subtitle">Offfline translator</div>
+        <div class="st-splash-subtitle">Offline translator</div>
       </div>
       <div class="st-splash-loader-wrap">
         <div class="st-splash-track">
@@ -915,7 +915,7 @@
           <span>Easy Lang</span>
           <span class="st-anchor" title="Copy anchor link">🔗</span>
         </h1>
-        <div class="st-subtitle">Offfline translator</div>
+        <div class="st-subtitle">Offline translator</div>
       </div>
     </div>
 
@@ -1051,91 +1051,22 @@
       runSplashScreen(1800);
     });
 
-    // 204 NLLB-200 Language Options
-    const LANGUAGES = [
-      { code: "hin_Deva", label: "Hindi (Devanagari, hin_Deva)" },
-      { code: "eng_Latn", label: "English (Latin, eng_Latn)" },
-      { code: "ben_Beng", label: "Bengali (Bengali, ben_Beng)" },
-      { code: "spa_Latn", label: "Spanish (Latin, spa_Latn)" },
-      { code: "fra_Latn", label: "French (Latin, fra_Latn)" },
-      { code: "deu_Latn", label: "German (Latin, deu_Latn)" },
-      { code: "arb_Arab", label: "Arabic (Arabic, arb_Arab)" },
-      { code: "zho_Hans", label: "Chinese (Simplified, zho_Hans)" },
-      { code: "rus_Cyrl", label: "Russian (Cyrillic, rus_Cyrl)" },
-      { code: "jpn_Jpan", label: "Japanese (Japanese, jpn_Jpan)" },
-      { code: "por_Latn", label: "Portuguese (Latin, por_Latn)" },
-      { code: "urd_Arab", label: "Urdu (Arabic, urd_Arab)" },
-      { code: "pan_Guru", label: "Eastern Panjabi (Gurmukhi, pan_Guru)" },
-      { code: "tam_Taml", label: "Tamil (Tamil, tam_Taml)" },
-      { code: "tel_Telu", label: "Telugu (Telugu, tel_Telu)" },
-      { code: "mar_Deva", label: "Marathi (Devanagari, mar_Deva)" },
-      { code: "guj_Gujr", label: "Gujarati (Gujarati, guj_Gujr)" },
-      { code: "kan_Knda", label: "Kannada (Kannada, kan_Knda)" },
-      { code: "mal_Mlym", label: "Malayalam (Malayalam, mal_Mlym)" },
-      { code: "kor_Hang", label: "Korean (Hangul, kor_Hang)" },
-      { code: "ita_Latn", label: "Italian (Latin, ita_Latn)" },
-      { code: "tur_Latn", label: "Turkish (Latin, tur_Latn)" },
-      { code: "vie_Latn", label: "Vietnamese (Latin, vie_Latn)" },
-      { code: "pol_Latn", label: "Polish (Latin, pol_Latn)" },
-      { code: "ukr_Cyrl", label: "Ukrainian (Cyrillic, ukr_Cyrl)" },
-      { code: "nld_Latn", label: "Dutch (Latin, nld_Latn)" },
-      { code: "pes_Arab", label: "Iranian Persian (Arabic, pes_Arab)" },
-      { code: "ind_Latn", label: "Indonesian (Latin, ind_Latn)" },
-      { code: "swh_Latn", label: "Swahili (Latin, swh_Latn)" }
-    ];
-
-    // Populate Language Dropdowns
+    // Load the language inventory from the locally installed NLLB tokenizer.
+    const LANGUAGES = [];
     const targetSelect = document.getElementById("targetLang");
     const manualSourceSelect = document.getElementById("manualSourceLang");
-
-    LANGUAGES.forEach(lang => {
-      const optTgt = document.createElement("option");
-      optTgt.value = lang.code;
-      optTgt.textContent = lang.label;
-      targetSelect.appendChild(optTgt);
-
-      const optSrc = document.createElement("option");
-      optSrc.value = lang.code;
-      optSrc.textContent = lang.label;
-      if (lang.code === "eng_Latn") optSrc.selected = true;
-      manualSourceSelect.appendChild(optSrc);
-    });
-
-    // Translation Knowledge Base for Sample Sentences
-    const SAMPLES_DICT = {
-      "clean water is important for health.": {
-        "hin_Deva": "स्वच्छ जल स्वास्थ्य के लिए महत्वपूर्ण है।",
-        "ben_Beng": "বিশুদ্ধ জল স্বাস্থ্যের জন্য গুরুত্বপূর্ণ।",
-        "spa_Latn": "El agua limpia es importante para la salud.",
-        "fra_Latn": "L'eau propre est importante pour la santé.",
-        "deu_Latn": "Sauberes Wasser ist wichtig für die Gesundheit.",
-        "arb_Arab": "المياه النظيفة مهمة للصحة.",
-        "zho_Hans": "清洁的水对健康很重要。",
-        "rus_Cyrl": "Чистая вода важна для здоровья.",
-        "jpn_Jpan": "清潔な水は健康にとって重要です。"
-      },
-      "farmers wait for the monsoon rain.": {
-        "hin_Deva": "किसान मानसून की बारिश का इंतजार करते हैं।",
-        "ben_Beng": "কৃষকেরা বর্ষার বৃষ্টির জন্য অপেক্ষা করেন।",
-        "spa_Latn": "Los agricultores esperan las lluvias monzónicas.",
-        "fra_Latn": "Les agriculteurs attendent la pluie de mousson.",
-        "deu_Latn": "Die Bauern warten auf den Monsunregen.",
-        "arb_Arab": "ينتظر المزارعون أمطار الرياح الموسمية.",
-        "zho_Hans": "农民们等待季风雨。",
-        "rus_Cyrl": "Фермеры ждут муссонных дождей."
-      },
-      "every child deserves quality education.": {
-        "hin_Deva": "प्रत्येक बच्चे को गुणवत्तापूर्ण शिक्षा का अधिकार है।",
-        "ben_Beng": "প্রতিটি শিশু মানসম্পন্ন শিক্ষার যোগ্য।",
-        "spa_Latn": "Cada niño merece una educación de calidad.",
-        "fra_Latn": "Chaque enfant mérite une éducation de qualité.",
-        "deu_Latn": "Jedes Kind verdient eine hochwertige Bildung.",
-        "arb_Arab": "يستحق كل طفل تعليماً جيداً.",
-        "zho_Hans": "每个孩子都应享有优质教育。",
-        "rus_Cyrl": "Каждый ребенок заслуживает качественного образования."
+    async function loadLanguages() {
+      const response = await fetch("./api/languages");
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not load model languages.");
+      LANGUAGES.push(...data.languages);
+      for (const lang of LANGUAGES) for (const select of [targetSelect, manualSourceSelect]) {
+        const option = document.createElement("option"); option.value = lang.code; option.textContent = lang.label; select.appendChild(option);
       }
-    };
-
+      if (LANGUAGES.some(lang => lang.code === "eng_Latn")) manualSourceSelect.value = "eng_Latn";
+    }
+    let languageLoadError = null;
+    const languagesReady = loadLanguages().catch(error => { languageLoadError = error; showWarning(error.message + " Start api_server.py and install the local NLLB model."); });
     // DOM Elements
     const sampleSelect = document.getElementById("sampleSelect");
     const sourceText = document.getElementById("sourceText");
@@ -1188,24 +1119,19 @@
       return document.querySelector('input[name="sourceMode"]:checked').value;
     }
 
-    function detectLanguage(text) {
-      if (/[\u0900-\u097F]/.test(text)) return { code: "hin_Deva", label: "Hindi (Devanagari, hin_Deva)" };
-      if (/[\u0980-\u09FF]/.test(text)) return { code: "ben_Beng", label: "Bengali (Bengali, ben_Beng)" };
-      if (/[\u0600-\u06FF]/.test(text)) return { code: "arb_Arab", label: "Arabic (Arabic, arb_Arab)" };
-      if (/[\u0400-\u04FF]/.test(text)) return { code: "rus_Cyrl", label: "Russian (Cyrillic, rus_Cyrl)" };
-      if (/[\u4E00-\u9FFF]/.test(text)) return { code: "zho_Hans", label: "Chinese (Simplified, zho_Hans)" };
-      return { code: "eng_Latn", label: "English (Latin, eng_Latn)" };
+    async function detectLanguage(text) {
+      const response = await fetch("./api/detect", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Language detection failed.");
+      return data.detected;
     }
-
     function handleSourceChange() {
       const text = sourceText.value.trim();
       const mode = getActiveSourceMode();
 
       if (mode === "auto") {
         if (text.length >= 4) {
-          const detected = detectLanguage(text);
-          detectionNotice.style.display = "flex";
-          detectionNoticeText.textContent = `Detected: ${detected.label}. Choose manually if this is incorrect.`;
+          detectLanguage(text).then(detected => { if (getActiveSourceMode() !== "auto") return; detectionNotice.style.display = "flex"; detectionNoticeText.textContent = detected ? `Detected: ${detected.label}. Choose manually if this is incorrect.` : "Could not confidently detect a supported language. Choose manually."; }).catch(error => showWarning(error.message));
         } else {
           detectionNotice.style.display = "none";
         }
@@ -1226,70 +1152,28 @@
     sourceText.addEventListener("input", handleSourceChange);
     targetSelect.addEventListener("change", checkModelNotice);
 
-    // Translate Action
-    translateBtn.addEventListener("click", () => {
-      const text = sourceText.value.trim();
-      const tgt = targetSelect.value;
-
+    function showWarning(message) { warningNotice.style.display = "flex"; warningNoticeText.textContent = message; }
+    // Translation runs through the local Python NLLB engine, never a cloud API.
+    translateBtn.addEventListener("click", async () => {
+      const text = sourceText.value.trim(), tgt = targetSelect.value;
       warningNotice.style.display = "none";
-
-      if (!text) {
-        warningNotice.style.display = "flex";
-        warningNoticeText.textContent = "Enter some text to translate.";
-        return;
-      }
-
-      if (!tgt) {
-        warningNotice.style.display = "flex";
-        warningNoticeText.textContent = "Choose a target language.";
-        return;
-      }
-
-      // Simulate translation execution
-      translateBtn.disabled = true;
-      translateBtn.innerHTML = '<span class="st-spinner"></span>Translating...';
-
-      setTimeout(() => {
-        translateBtn.disabled = false;
-        translateBtn.innerHTML = "<span>Translate</span>";
-
-        const norm = text.toLowerCase().replace(/[\r\n]+/g, " ");
-        let result = "";
-
-        if (SAMPLES_DICT[norm] && SAMPLES_DICT[norm][tgt]) {
-          result = SAMPLES_DICT[norm][tgt];
-        } else if (tgt === "hin_Deva") {
-          result = `स्वच्छ और सटीक अनुवाद: ${text}`;
-        } else if (tgt === "ben_Beng") {
-          result = `সঠিক অনুবাদ: ${text}`;
-        } else if (tgt === "spa_Latn") {
-          result = `Traducción precisa: ${text}`;
-        } else if (tgt === "fra_Latn") {
-          result = `Traduction précise: ${text}`;
-        } else if (tgt === "deu_Latn") {
-          result = `Genaue Übersetzung: ${text}`;
-        } else {
-          result = `[${tgt}] ${text}`;
-        }
-
-        targetText.value = result;
-        resultSection.style.display = "block";
-
-        // Generate Subword Tokens
-        expanderTokens.innerHTML = "";
-        const words = text.split(/\s+/);
-        words.forEach(w => {
-          const span = document.createElement("span");
-          span.className = "st-token";
-          span.textContent = " " + w;
-          expanderTokens.appendChild(span);
-        });
-
-        // Scroll result smoothly into view
+      if (!text) return showWarning("Enter some text to translate.");
+      if (!tgt) return showWarning("Choose a target language.");
+      await languagesReady;
+      if (languageLoadError) return showWarning(languageLoadError.message);
+      let src = getActiveSourceMode() === "manual" ? manualSourceSelect.value : null;
+      if (!src) { try { const detected = await detectLanguage(text); src = detected && detected.code; } catch (error) { return showWarning(error.message); } }
+      if (!src) return showWarning("Could not detect the source language. Choose it manually.");
+      translateBtn.disabled = true; translateBtn.innerHTML = '<span class="st-spinner"></span>Translating locally...';
+      try {
+        const response = await fetch("./api/translate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, source_language: src, target_language: tgt, num_beams: Number(beamSlider.value) }) });
+        const data = await response.json(); if (!response.ok) throw new Error(data.error || "Translation failed.");
+        targetText.value = data.translation; resultSection.style.display = "block"; expanderTokens.replaceChildren();
+        (data.tokens || []).forEach(token => { const span = document.createElement("span"); span.className = "st-token"; span.textContent = token; expanderTokens.appendChild(span); });
         resultSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }, 350);
+      } catch (error) { showWarning(error.message); }
+      finally { translateBtn.disabled = false; translateBtn.innerHTML = "<span>Translate</span>"; }
     });
-
     // Subword Token Expander toggle
     expanderHeader.addEventListener("click", () => {
       tokenExpander.classList.toggle("open");
