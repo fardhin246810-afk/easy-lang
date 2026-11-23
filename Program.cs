@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace EasyLangApp
@@ -15,21 +16,21 @@ namespace EasyLangApp
 
             try
             {
-                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                string indexPath = Path.Combine(baseDir, "index.html");
+                // Ensure AppData directory exists
+                string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string targetDir = Path.Combine(appData, "EasyLang", "AppWeb");
+                string assetsDir = Path.Combine(targetDir, "assets");
+                Directory.CreateDirectory(assetsDir);
 
-                if (!File.Exists(indexPath))
-                {
-                    MessageBox.Show(
-                        "Could not locate index.html. Please ensure EasyLang.exe is placed in the project folder.",
-                        "Easy Lang - File Missing",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    );
-                    return;
-                }
+                string indexPath = Path.Combine(targetDir, "index.html");
+                string logoPath = Path.Combine(assetsDir, "logo.png");
 
-                // Check for Microsoft Edge or Chrome to run in clean standalone --app mode
+                // Extract embedded index.html
+                ExtractResource("index.html", indexPath);
+                // Extract embedded logo.png
+                ExtractResource("assets.logo.png", logoPath);
+
+                // Look for Microsoft Edge or Chrome
                 string edgePath1 = @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe";
                 string edgePath2 = @"C:\Program Files\Microsoft\Edge\Application\msedge.exe";
                 string chromePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
@@ -40,12 +41,10 @@ namespace EasyLangApp
                 else if (File.Exists(chromePath)) browserExe = chromePath;
 
                 string fileUri = new Uri(indexPath).AbsoluteUri;
+                string userDir = Path.Combine(appData, "EasyLang", "AppProfile");
 
                 if (browserExe != null)
                 {
-                    string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    string userDir = Path.Combine(appData, "EasyLang", "AppProfile");
-                    
                     ProcessStartInfo psi = new ProcessStartInfo();
                     psi.FileName = browserExe;
                     psi.Arguments = string.Format("--app=\"{0}\" --window-size=1020,840 --user-data-dir=\"{1}\"", fileUri, userDir);
@@ -54,7 +53,6 @@ namespace EasyLangApp
                 }
                 else
                 {
-                    // Fallback to default shell handler
                     Process.Start(new ProcessStartInfo(fileUri) { UseShellExecute = true });
                 }
             }
@@ -62,10 +60,25 @@ namespace EasyLangApp
             {
                 MessageBox.Show(
                     "Error launching Easy Lang: " + ex.Message,
-                    "Easy Lang - Error",
+                    "Easy Lang",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
+            }
+        }
+
+        private static void ExtractResource(string resourceName, string outputPath)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream != null)
+                {
+                    using (FileStream fileStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+                    {
+                        stream.CopyTo(fileStream);
+                    }
+                }
             }
         }
     }
