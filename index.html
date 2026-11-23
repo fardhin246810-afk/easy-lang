@@ -1,1292 +1,142 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Easy Lang · Offline translator</title>
-  <link rel="icon" type="image/png" href="assets/logo.png">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Easy Lang">
-  <meta name="theme-color" content="#0e1117">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Easy Lang — Offline Translator</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/logo.png">
   <style>
-    :root {
-      --bg-color: #0e1117;
-      --secondary-bg: #262730;
-      --sidebar-bg: #161922;
-      --card-bg: #262730;
-      --text-color: #fafafa;
-      --text-secondary: #a3a8b8;
-      --text-muted: #808495;
-      --primary-color: #ff4b4b;
-      --primary-hover: #ff3333;
-      --primary-active: #e03a3a;
-      --border-color: #31333F;
-      --border-light: rgba(250, 250, 250, 0.12);
-      --font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      --radius: 8px;
-      --info-bg: rgba(2, 136, 209, 0.15);
-      --info-border: #0288d1;
-      --info-text: #81d4fa;
-      --warning-bg: rgba(255, 179, 0, 0.15);
-      --warning-border: #ffb300;
-      --warning-text: #ffe082;
-    }
-
-    [data-theme="light"] {
-      --bg-color: #ffffff;
-      --secondary-bg: #f0f2f6;
-      --sidebar-bg: #f8f9fb;
-      --card-bg: #f0f2f6;
-      --text-color: #31333F;
-      --text-secondary: #555867;
-      --text-muted: #808495;
-      --border-color: #d6d9e0;
-      --border-light: rgba(0, 0, 0, 0.1);
-      --info-bg: #e1f5fe;
-      --info-border: #0288d1;
-      --info-text: #0277bd;
-      --warning-bg: #fff8e1;
-      --warning-border: #ffb300;
-      --warning-text: #b78103;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: var(--font-family);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow-x: hidden;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    /* ========================================================
-       PRO OPENING SPLASH SCREEN
-       ======================================================== */
-    .st-splash-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: #0e1117;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: none;
-    }
-
-    .st-splash-overlay.fade-out {
-      opacity: 0;
-      transform: scale(1.04);
-      pointer-events: none;
-    }
-
-    .st-splash-glow {
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      background: radial-gradient(circle, rgba(255, 75, 75, 0.2) 0%, rgba(255, 75, 75, 0.05) 45%, transparent 70%);
-      pointer-events: none;
-      animation: splashGlowPulse 2.8s ease-in-out infinite alternate;
-    }
-
-    @keyframes splashGlowPulse {
-      0% { transform: scale(0.9); opacity: 0.6; }
-      100% { transform: scale(1.15); opacity: 1; }
-    }
-
-    .st-splash-card {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      animation: splashCardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes splashCardEntrance {
-      0% {
-        opacity: 0;
-        transform: translateY(20px) scale(0.92);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .st-splash-logo-container {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .st-splash-ring {
-      position: absolute;
-      top: -6px;
-      left: -6px;
-      right: -6px;
-      bottom: -6px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 75, 75, 0.3);
-      box-shadow: 0 0 25px rgba(255, 75, 75, 0.35);
-      animation: splashRingRotate 4s linear infinite;
-    }
-
-    @keyframes splashRingRotate {
-      0% { transform: rotate(0deg); border-color: rgba(255, 75, 75, 0.4); }
-      50% { border-color: rgba(255, 75, 75, 0.8); }
-      100% { transform: rotate(360deg); border-color: rgba(255, 75, 75, 0.4); }
-    }
-
-    .st-splash-logo-img {
-      width: 110px;
-      height: 110px;
-      border-radius: 28px;
-      object-fit: cover;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 75, 75, 0.25);
-      animation: splashLogoPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
-
-    @keyframes splashLogoPop {
-      0% { transform: scale(0.7); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .st-splash-brand {
-      margin-bottom: 1.75rem;
-    }
-
-    .st-splash-title {
-      font-size: 2.1rem;
-      font-weight: 700;
-      color: #fafafa;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.25rem;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .st-splash-subtitle {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .st-splash-loader-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.65rem;
-      width: 220px;
-    }
-
-    .st-splash-track {
-      width: 100%;
-      height: 3.5px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 9999px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .st-splash-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 40%;
-      background: linear-gradient(90deg, #ff4b4b 0%, #ff8080 100%);
-      border-radius: 9999px;
-      box-shadow: 0 0 10px #ff4b4b;
-      animation: splashBarSweep 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    }
-
-    @keyframes splashBarSweep {
-      0% { left: -40%; width: 30%; }
-      50% { width: 55%; }
-      100% { left: 100%; width: 30%; }
-    }
-
-    .st-splash-status {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 0.01em;
-      font-family: inherit;
-      transition: opacity 0.2s;
-    }
-
-    /* Top Navigation Bar */
-    .st-header {
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.25rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background-color: var(--bg-color);
-    }
-
-    .st-header-left {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-    }
-
-    .st-header-brand-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      object-fit: cover;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-
-    .st-header-right {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
-    }
-
-    .icon-button {
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      cursor: pointer;
-      padding: 6px 8px;
-      border-radius: var(--radius);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      transition: background-color 0.15s, color 0.15s;
-    }
-
-    .icon-button:hover {
-      background-color: var(--secondary-bg);
-      color: var(--text-color);
-    }
-
-    /* Streamlit ⋮ Popup Menu */
-    .st-menu-popup {
-      position: absolute;
-      top: 48px;
-      right: 0;
-      width: 260px;
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
-      padding: 0.75rem 0.6rem;
-      display: none;
-      flex-direction: column;
-      gap: 0.35rem;
-      z-index: 200;
-    }
-
-    .st-menu-popup.open {
-      display: flex;
-    }
-
-    /* Theme pill switcher */
-    .theme-selector {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      background: var(--bg-color);
-      border-radius: 6px;
-      padding: 3px;
-      margin-bottom: 0.5rem;
-      gap: 3px;
-    }
-
-    .theme-pill {
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      padding: 6px 4px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-family: inherit;
-    }
-
-    .theme-pill.active {
-      background: var(--secondary-bg);
-      color: var(--text-color);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 7px 10px;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      color: var(--text-color);
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .menu-item:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-
-    [data-theme="light"] .menu-item:hover {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-
-    .menu-item .shortcut {
-      color: var(--text-muted);
-      font-size: 0.78rem;
-    }
-
-    .menu-divider {
-      height: 1px;
-      background-color: var(--border-light);
-      margin: 4px 0;
-    }
-
-    .menu-footer {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      padding: 6px 10px 2px;
-    }
-
-    /* Switch toggle */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 32px;
-      height: 18px;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #4c4f5a;
-      transition: .2s;
-      border-radius: 18px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 14px;
-      width: 14px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      transition: .2s;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: var(--primary-color);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(14px);
-    }
-
-    /* Sidebar */
-    .st-sidebar-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 150;
-      display: none;
-    }
-
-    .st-sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: 320px;
-      background-color: var(--sidebar-bg);
-      border-right: 1px solid var(--border-color);
-      z-index: 160;
-      padding: 1.5rem;
-      transform: translateX(-100%);
-      transition: transform 0.25s ease-in-out;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .st-sidebar.open {
-      transform: translateX(0);
-    }
-
-    .st-sidebar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .st-sidebar-header h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
-
-    /* Main Content Container (Streamlit centered layout) */
-    .st-container {
-      max-width: 730px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 1rem 1.5rem 4rem;
-      flex: 1;
-    }
-
-    /* Streamlit Title with Logo Integration */
-    .st-title-brand-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 0.15rem;
-    }
-
-    .st-page-logo-img {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      object-fit: cover;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-    }
-
-    .st-title {
-      font-size: 2.35rem;
-      font-weight: 700;
-      color: var(--text-color);
-      line-height: 1.2;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .st-anchor {
-      color: var(--text-muted);
-      font-size: 1.2rem;
-      font-weight: normal;
-      opacity: 0.6;
-      cursor: pointer;
-    }
-
-    .st-anchor:hover {
-      opacity: 1;
-      color: var(--primary-color);
-    }
-
-    .st-subtitle {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      margin-bottom: 0.35rem;
-      letter-spacing: -0.01em;
-    }
-
-    .st-caption {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 1.75rem;
-      line-height: 1.5;
-    }
-
-    /* Streamlit Form Groups & Inputs */
-    .st-form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .st-label {
-      display: block;
-      font-size: 0.875rem;
-      color: var(--text-color);
-      margin-bottom: 0.4rem;
-      font-weight: 400;
-    }
-
-    .st-select-wrapper {
-      position: relative;
-      width: 100%;
-    }
-
-    .st-select {
-      width: 100%;
-      height: 42px;
-      background-color: var(--secondary-bg);
-      border: 1px solid transparent;
-      border-radius: var(--radius);
-      color: var(--text-color);
-      font-family: inherit;
-      font-size: 0.92rem;
-      padding: 0 2.2rem 0 0.9rem;
-      outline: none;
-      appearance: none;
-      -webkit-appearance: none;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    .st-select:focus {
-      border-color: var(--primary-color);
-    }
-
-    .st-select-arrow {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-    }
-
-    .st-textarea {
-      width: 100%;
-      min-height: 140px;
-      background-color: var(--secondary-bg);
-      border: 1px solid transparent;
-      border-radius: var(--radius);
-      color: var(--text-color);
-      font-family: inherit;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      padding: 0.75rem 0.9rem;
-      outline: none;
-      resize: vertical;
-      transition: border-color 0.2s;
-    }
-
-    .st-textarea:focus {
-      border-color: var(--primary-color);
-    }
-
-    .st-textarea::placeholder {
-      color: var(--text-muted);
-    }
-
-    /* Streamlit Radio Buttons (Horizontal) */
-    .st-radio-group {
-      display: flex;
-      align-items: center;
-      gap: 1.75rem;
-      margin-top: 0.25rem;
-    }
-
-    .st-radio-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-      font-size: 0.92rem;
-      color: var(--text-color);
-      user-select: none;
-    }
-
-    .st-radio-input {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 17px;
-      height: 17px;
-      border: 2px solid var(--text-muted);
-      border-radius: 50%;
-      outline: none;
-      cursor: pointer;
-      position: relative;
-      transition: border-color 0.15s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .st-radio-input:checked {
-      border-color: var(--primary-color);
-    }
-
-    .st-radio-input:checked::after {
-      content: "";
-      width: 9px;
-      height: 9px;
-      background-color: var(--primary-color);
-      border-radius: 50%;
-    }
-
-    /* Streamlit Primary Button */
-    .st-button {
-      width: 100%;
-      height: 42px;
-      background-color: var(--primary-color);
-      color: #ffffff;
-      border: none;
-      border-radius: var(--radius);
-      font-family: inherit;
-      font-size: 0.95rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 1rem;
-      transition: background-color 0.15s, transform 0.05s;
-    }
-
-    .st-button:hover {
-      background-color: var(--primary-hover);
-    }
-
-    .st-button:active {
-      background-color: var(--primary-active);
-      transform: scale(0.99);
-    }
-
-    /* Streamlit Alerts / Info boxes */
-    .st-alert {
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius);
-      font-size: 0.88rem;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
-      line-height: 1.45;
-    }
-
-    .st-alert.info {
-      background-color: var(--info-bg);
-      border-left: 4px solid var(--info-border);
-      color: var(--info-text);
-    }
-
-    .st-alert.warning {
-      background-color: var(--warning-bg);
-      border-left: 4px solid var(--warning-border);
-      color: var(--warning-text);
-    }
-
-    /* Streamlit Expander */
-    .st-expander {
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      margin-top: 1rem;
-      overflow: hidden;
-      background: var(--bg-color);
-    }
-
-    .st-expander-header {
-      padding: 0.65rem 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      color: var(--text-color);
-      user-select: none;
-      background: var(--secondary-bg);
-    }
-
-    .st-expander-content {
-      padding: 0.85rem 1rem;
-      display: none;
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: var(--text-color);
-      background-color: var(--bg-color);
-      line-height: 1.6;
-      word-break: break-all;
-    }
-
-    .st-expander.open .st-expander-content {
-      display: block;
-    }
-
-    .st-token {
-      background: var(--secondary-bg);
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin: 2px 3px;
-      display: inline-block;
-      border: 1px solid var(--border-light);
-    }
-
-    /* Range slider in sidebar */
-    .st-slider {
-      width: 100%;
-      accent-color: var(--primary-color);
-      cursor: pointer;
-    }
-
-    /* Spinner */
-    .st-spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #ffffff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    :root{font-family:Arial,Helvetica,sans-serif;color:#202124;background:#fff}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:#fff}
+    header{height:64px;border-bottom:1px solid #e8eaed;display:flex;align-items:center;padding:0 max(20px,calc((100vw - 1080px)/2));gap:12px}
+    .logo{width:34px;height:34px;object-fit:contain;border-radius:9px}
+    header strong{font-size:21px;font-weight:600;color:#3c4043}
+    main{max-width:1080px;margin:48px auto;padding:0 20px}
+    h1{font-size:30px;font-weight:500;margin:0 0 10px;color:#202124}
+    .sub{color:#5f6368;margin:0 0 30px;line-height:1.5}
+    .translator{border:1px solid #dadce0;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px #0000000d}
+    .language-bar{display:grid;grid-template-columns:1fr 54px 1fr;background:#f8f9fa;border-bottom:1px solid #dadce0}
+    .language-bar select{width:100%;padding:17px 18px;border:0;background:transparent;color:#202124;font-size:15px;outline:none;min-width:0}
+    .swap{border:0;background:transparent;color:#5f6368;font-size:21px;cursor:pointer}
+    .panels{display:grid;grid-template-columns:1fr 1fr}
+    .panel{min-width:0;padding:18px 20px 14px;min-height:230px}
+    .panel+ .panel{border-left:1px solid #dadce0;background:#fff}
+    textarea{width:100%;min-height:175px;resize:vertical;border:0;outline:0;font:20px/1.5 Arial, sans-serif;color:#202124;background:transparent}
+    textarea::placeholder{color:#9aa0a6}
+    .panel-foot{display:flex;justify-content:space-between;align-items:center;color:#80868b;font-size:12px;gap:10px}
+    .actions{display:flex;align-items:center;gap:10px;padding:14px 18px;border-top:1px solid #e8eaed;background:#fff}
+    button.primary{border:0;border-radius:8px;background:#1a73e8;color:#fff;font-size:14px;font-weight:600;padding:12px 25px;cursor:pointer}
+    button.primary:disabled{opacity:.65;cursor:wait}
+    button.secondary{border:1px solid #dadce0;border-radius:8px;background:white;color:#3c4043;padding:10px 14px;cursor:pointer}
+    .status{margin:15px 2px 0;min-height:22px;font-size:14px;color:#5f6368}
+    .status.error{color:#b3261e}.status.success{color:#188038}
+    .footer{margin-top:26px;color:#80868b;font-size:13px;line-height:1.6}
+    .hidden{display:none}
+    @media(max-width:650px){main{margin:28px auto;padding:0 14px}h1{font-size:25px}.panels{grid-template-columns:1fr}.panel{min-height:180px}.panel+ .panel{border-left:0;border-top:1px solid #dadce0}.language-bar{grid-template-columns:1fr 42px 1fr}.language-bar select{padding:14px 8px;font-size:13px}textarea{min-height:125px;font-size:18px}.actions{padding:12px}.actions .primary{flex:1}}
   </style>
 </head>
 <body>
-
-  <!-- Pro Opening Splash Screen -->
-  <div id="splashScreen" class="st-splash-overlay">
-    <div class="st-splash-glow"></div>
-    <div class="st-splash-card">
-      <div class="st-splash-logo-container">
-        <div class="st-splash-ring"></div>
-        <img src="assets/logo.png" alt="Easy Lang Logo" class="st-splash-logo-img">
+  <header><img class="logo" src="./assets/logo.png" alt=""><strong>Easy Lang</strong></header>
+  <main>
+    <h1>Translate without the internet</h1>
+    <p class="sub">Fast, private translation powered by your locally installed NLLB model. Your text stays on your computer.</p>
+    <section class="translator" aria-label="Translator">
+      <div class="language-bar">
+        <select id="sourceLang" aria-label="Translate from"><option value="auto">Detect language</option></select>
+        <button class="swap" id="swapBtn" title="Swap languages" aria-label="Swap languages">⇄</button>
+        <select id="targetLang" aria-label="Translate to"><option value="">Choose language</option></select>
       </div>
-      <div class="st-splash-brand">
-        <h1 class="st-splash-title">Easy Lang</h1>
-        <div class="st-splash-subtitle">Offline translator</div>
-      </div>
-      <div class="st-splash-loader-wrap">
-        <div class="st-splash-track">
-          <div class="st-splash-bar"></div>
+      <div class="panels">
+        <div class="panel">
+          <textarea id="sourceText" maxlength="10000" placeholder="Enter text" aria-label="Text to translate"></textarea>
+          <div class="panel-foot"><span id="sourceCount">0 / 10,000</span><button class="secondary" id="clearBtn">Clear</button></div>
         </div>
-        <div class="st-splash-status" id="splashStatus">Initializing offline neural engine...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Top Streamlit Navigation Bar -->
-  <header class="st-header">
-    <div class="st-header-left">
-      <!-- Sidebar collapse toggle: >> -->
-      <button class="icon-button" id="sidebarToggle" title="Open sidebar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="13 17 18 12 13 7"></polyline>
-          <polyline points="6 17 11 12 6 7"></polyline>
-        </svg>
-      </button>
-      <img src="assets/logo.png" alt="Easy Lang Logo" class="st-header-brand-icon" title="Easy Lang">
-    </div>
-
-    <div class="st-header-right">
-      <!-- NO Deploy button (as requested) -->
-
-      <!-- Streamlit 3-dots Menu button -->
-      <button class="icon-button" id="menuToggle" title="Settings and options">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="1.5"></circle>
-          <circle cx="12" cy="5" r="1.5"></circle>
-          <circle cx="12" cy="19" r="1.5"></circle>
-        </svg>
-      </button>
-
-      <!-- Exact Streamlit Dropdown Menu Popup -->
-      <div class="st-menu-popup" id="menuPopup">
-        <!-- Theme Switcher Pills -->
-        <div class="theme-selector">
-          <button class="theme-pill" data-theme-val="system">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18V4c4.41 0 8 3.59 8 8s-3.59 8-8 8z"></path>
-            </svg>
-            <span>System</span>
-          </button>
-          <button class="theme-pill" data-theme-val="light">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="4"></circle>
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-            </svg>
-            <span>Light</span>
-          </button>
-          <button class="theme-pill active" data-theme-val="dark">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-            <span>Dark</span>
-          </button>
+        <div class="panel">
+          <textarea id="resultText" placeholder="Translation" readonly aria-label="Translation result"></textarea>
+          <div class="panel-foot"><span id="detectedLabel"> </span><button class="secondary" id="copyBtn">Copy translation</button></div>
         </div>
-
-        <div class="menu-item" id="rerunBtn">
-          <span>Rerun</span>
-          <span class="shortcut">R</span>
-        </div>
-
-        <div class="menu-item">
-          <span>Auto rerun</span>
-          <label class="switch">
-            <input type="checkbox" id="autoRerunToggle">
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <div class="menu-divider"></div>
-
-        <div class="menu-item" id="clearCacheBtn">
-          <span>Clear cache</span>
-          <span class="shortcut">C</span>
-        </div>
-
-        <div class="menu-divider"></div>
-
-        <div class="menu-item" onclick="window.print()">
-          <span>Print</span>
-        </div>
-
-        <div class="menu-item" id="installAppBtn">
-          <span>📲 Install App</span>
-        </div>
-
-        <div class="menu-item" id="recordScreenBtn">
-          <span>Record screen</span>
-        </div>
-
-        <div class="menu-divider"></div>
-
-        <div class="menu-footer">Made with Streamlit v1.67.0</div>
       </div>
-    </div>
-  </header>
-
-  <!-- Sidebar Component -->
-  <div class="st-sidebar-overlay" id="sidebarOverlay"></div>
-  <aside class="st-sidebar" id="sidebar">
-    <div class="st-sidebar-header">
-      <h2>Settings</h2>
-      <button class="icon-button" id="sidebarClose">✕</button>
-    </div>
-
-    <div>
-      <label class="st-label">Beam search width: <strong id="beamDisplay">4</strong></label>
-      <input type="range" class="st-slider" id="beamSlider" min="1" max="6" value="4" step="1">
-    </div>
-
-    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1rem;">
-      <p>Device: <strong>CPU</strong></p>
-      <p style="margin-top: 0.4rem;">Model files stay on the hosting computer.</p>
-    </div>
-  </aside>
-
-  <!-- Centered Streamlit Content -->
-  <main class="st-container">
-    <!-- Title Brand Header -->
-    <div class="st-title-brand-row">
-      <img src="assets/logo.png" alt="Easy Lang Logo" class="st-page-logo-img">
-      <div>
-        <h1 class="st-title">
-          <span>Easy Lang</span>
-          <span class="st-anchor" title="Copy anchor link">🔗</span>
-        </h1>
-        <div class="st-subtitle">Offline translator</div>
-      </div>
-    </div>
-
-    <!-- Caption line from original Streamlit app -->
-    <div class="st-caption">
-      Translate between 200+ languages · Detection and translation run offline on the hosting computer.
-    </div>
-
-    <!-- Try a sample sentence -->
-    <div class="st-form-group">
-      <label class="st-label" for="sampleSelect">Try a sample sentence</label>
-      <div class="st-select-wrapper">
-        <select class="st-select" id="sampleSelect">
-          <option value="">Custom input...</option>
-          <option value="Clean water is important for health.">Clean water is important for health.</option>
-          <option value="Farmers wait for the monsoon rain.">Farmers wait for the monsoon rain.</option>
-          <option value="Every child deserves quality education.">Every child deserves quality education.</option>
-        </select>
-        <span class="st-select-arrow">⌵</span>
-      </div>
-    </div>
-
-    <!-- Text to translate -->
-    <div class="st-form-group">
-      <label class="st-label" for="sourceText">Text to translate</label>
-      <textarea class="st-textarea" id="sourceText" placeholder="Type or paste text here" spellcheck="false"></textarea>
-    </div>
-
-    <!-- Source language radio group -->
-    <div class="st-form-group">
-      <label class="st-label">Source language</label>
-      <div class="st-radio-group">
-        <label class="st-radio-label">
-          <input type="radio" class="st-radio-input" name="sourceMode" value="auto" checked>
-          <span>Auto-detect</span>
-        </label>
-        <label class="st-radio-label">
-          <input type="radio" class="st-radio-input" name="sourceMode" value="manual">
-          <span>Choose manually</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- Manual source selector (hidden when auto-detect is on) -->
-    <div class="st-form-group" id="manualSourceGroup" style="display: none;">
-      <label class="st-label" for="manualSourceLang">Choose the source language</label>
-      <div class="st-select-wrapper">
-        <select class="st-select" id="manualSourceLang"></select>
-        <span class="st-select-arrow">⌵</span>
-      </div>
-    </div>
-
-    <!-- Auto-detect alert info box -->
-    <div id="detectionNotice" class="st-alert info" style="display: none;">
-      <span>ℹ️</span>
-      <span id="detectionNoticeText">Detected: English (Latin, eng_Latn). Choose manually if this is incorrect.</span>
-    </div>
-
-    <!-- Translate into select -->
-    <div class="st-form-group">
-      <label class="st-label" for="targetLang">Translate into</label>
-      <div class="st-select-wrapper">
-        <select class="st-select" id="targetLang">
-          <option value="">Choose a target language...</option>
-        </select>
-        <span class="st-select-arrow">⌵</span>
-      </div>
-    </div>
-
-    <!-- Model Status Notice -->
-    <div id="modelNotice" class="st-alert info" style="display: none;">
-      <span>ℹ️</span>
-      <span>Using: Pretrained multilingual model</span>
-    </div>
-
-    <!-- Warning container -->
-    <div id="warningNotice" class="st-alert warning" style="display: none;">
-      <span>⚠️</span>
-      <span id="warningNoticeText">Enter some text to translate.</span>
-    </div>
-
-    <!-- Translate Button -->
-    <button class="st-button" id="translateBtn">
-      <span>Translate</span>
-    </button>
-
-    <!-- Translation Result Section -->
-    <div id="resultSection" style="display: none; margin-top: 2rem;">
-      <h3 style="font-size: 1.35rem; font-weight: 600; margin-bottom: 0.65rem;">Translation</h3>
-      <textarea class="st-textarea" id="targetText" readonly style="margin-bottom: 1rem;"></textarea>
-
-      <!-- Expander: Inspect subword tokens -->
-      <div class="st-expander" id="tokenExpander">
-        <div class="st-expander-header" id="expanderHeader">
-          <span id="expanderArrow">▶</span>
-          <span>Inspect subword tokens</span>
-        </div>
-        <div class="st-expander-content" id="expanderTokens"></div>
-      </div>
-    </div>
+      <div class="actions"><button class="primary" id="translateBtn">Translate</button><span id="modelLabel" class="panel-foot">Checking local model…</span></div>
+    </section>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <p class="footer">Works offline after the model has been downloaded and installed on the host computer. To translate from a phone, keep this computer running and connect both devices to the same Wi-Fi network.</p>
   </main>
-
-  <script>
-    // ==========================================
-    // SPLASH SCREEN LOGIC
-    // ==========================================
-    const splashScreen = document.getElementById("splashScreen");
-    const splashStatus = document.getElementById("splashStatus");
-
-    function runSplashScreen(duration = 1750) {
-      splashScreen.style.display = "flex";
-      splashScreen.classList.remove("fade-out");
-      splashStatus.textContent = "Initializing offline neural engine...";
-
-      setTimeout(() => {
-        splashStatus.textContent = "Loading NLLB-200 multilingual model...";
-      }, 650);
-
-      setTimeout(() => {
-        splashStatus.textContent = "Local engine ready";
-      }, 1250);
-
-      setTimeout(() => {
-        splashScreen.classList.add("fade-out");
-        setTimeout(() => {
-          splashScreen.style.display = "none";
-        }, 450);
-      }, duration);
-    }
-
-    // Run on initial load
-    window.addEventListener("DOMContentLoaded", () => {
-      runSplashScreen(1800);
-    });
-
-    // Load the language inventory from the locally installed NLLB tokenizer.
-    const LANGUAGES = [];
-    const targetSelect = document.getElementById("targetLang");
-    const manualSourceSelect = document.getElementById("manualSourceLang");
-    async function loadLanguages() {
-      const response = await fetch("./api/languages");
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not load model languages.");
-      LANGUAGES.push(...data.languages);
-      for (const lang of LANGUAGES) for (const select of [targetSelect, manualSourceSelect]) {
-        const option = document.createElement("option"); option.value = lang.code; option.textContent = lang.label; select.appendChild(option);
-      }
-      if (LANGUAGES.some(lang => lang.code === "eng_Latn")) manualSourceSelect.value = "eng_Latn";
-    }
-    let languageLoadError = null;
-    const languagesReady = loadLanguages().catch(error => { languageLoadError = error; showWarning(error.message + " Start api_server.py and install the local NLLB model."); });
-    // DOM Elements
-    const sampleSelect = document.getElementById("sampleSelect");
-    const sourceText = document.getElementById("sourceText");
-    const manualSourceGroup = document.getElementById("manualSourceGroup");
-    const detectionNotice = document.getElementById("detectionNotice");
-    const detectionNoticeText = document.getElementById("detectionNoticeText");
-    const modelNotice = document.getElementById("modelNotice");
-    const warningNotice = document.getElementById("warningNotice");
-    const warningNoticeText = document.getElementById("warningNoticeText");
-    const translateBtn = document.getElementById("translateBtn");
-    const resultSection = document.getElementById("resultSection");
-    const targetText = document.getElementById("targetText");
-    const tokenExpander = document.getElementById("tokenExpander");
-    const expanderHeader = document.getElementById("expanderHeader");
-    const expanderArrow = document.getElementById("expanderArrow");
-    const expanderTokens = document.getElementById("expanderTokens");
-
-    // Sidebar & Menu Elements
-    const sidebar = document.getElementById("sidebar");
-    const sidebarOverlay = document.getElementById("sidebarOverlay");
-    const sidebarToggle = document.getElementById("sidebarToggle");
-    const sidebarClose = document.getElementById("sidebarClose");
-    const menuToggle = document.getElementById("menuToggle");
-    const menuPopup = document.getElementById("menuPopup");
-    const beamSlider = document.getElementById("beamSlider");
-    const beamDisplay = document.getElementById("beamDisplay");
-
-    // Handle Sample Sentence Selection
-    sampleSelect.addEventListener("change", () => {
-      sourceText.value = sampleSelect.value;
-      handleSourceChange();
-    });
-
-    // Handle Source Language Mode (Auto-detect vs Manual)
-    const radioInputs = document.querySelectorAll('input[name="sourceMode"]');
-    radioInputs.forEach(radio => {
-      radio.addEventListener("change", (e) => {
-        if (e.target.value === "manual") {
-          manualSourceGroup.style.display = "block";
-          detectionNotice.style.display = "none";
-        } else {
-          manualSourceGroup.style.display = "none";
-          handleSourceChange();
-        }
-        checkModelNotice();
-      });
-    });
-
-    function getActiveSourceMode() {
-      return document.querySelector('input[name="sourceMode"]:checked').value;
-    }
-
-    async function detectLanguage(text) {
-      const response = await fetch("./api/detect", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Language detection failed.");
-      return data.detected;
-    }
-    function handleSourceChange() {
-      const text = sourceText.value.trim();
-      const mode = getActiveSourceMode();
-
-      if (mode === "auto") {
-        if (text.length >= 4) {
-          detectLanguage(text).then(detected => { if (getActiveSourceMode() !== "auto") return; detectionNotice.style.display = "flex"; detectionNoticeText.textContent = detected ? `Detected: ${detected.label}. Choose manually if this is incorrect.` : "Could not confidently detect a supported language. Choose manually."; }).catch(error => showWarning(error.message));
-        } else {
-          detectionNotice.style.display = "none";
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const source = $("sourceLang"), target = $("targetLang"), input = $("sourceText"), output = $("resultText");
+  const button = $("translateBtn"), status = $("status"), modelLabel = $("modelLabel");
+  let languageMap = new Map();
+  function message(text, kind="") { status.textContent=text; status.className="status "+kind; }
+  async function jsonRequest(path, payload) {
+    const response = await fetch(path, payload ? {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)} : {});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "The local translation service returned an error.");
+    return data;
+  }
+  async function initialize() {
+    try {
+      const health = await jsonRequest("./api/health");
+      modelLabel.textContent = health.model_ready ? "Local model ready · "+health.device.toUpperCase() : "Model not installed";
+      if (!health.model_ready) message("Install the model first by running: python download_model.py","error");
+      const data = await jsonRequest("./api/languages");
+      for (const item of data.languages) {
+        languageMap.set(item.code,item.label);
+        for (const select of [source,target]) {
+          const option=document.createElement("option"); option.value=item.code; option.textContent=item.label; select.appendChild(option);
         }
       }
-      checkModelNotice();
+      if (languageMap.has("eng_Latn")) source.value="auto";
+      if (languageMap.has("hin_Deva")) target.value="hin_Deva";
+      else if (data.languages.length) target.value=data.languages[0].code;
+    } catch(error) {
+      modelLabel.textContent="Local server unavailable";
+      message(error.message+" Start the app with Start-Mobile-Server.bat.","error");
     }
-
-    function checkModelNotice() {
-      const hasSrc = sourceText.value.trim().length > 0;
-      const hasTgt = targetSelect.value !== "";
-      if (hasSrc && hasTgt) {
-        modelNotice.style.display = "flex";
-      } else {
-        modelNotice.style.display = "none";
+  }
+  input.addEventListener("input",()=>{$("sourceCount").textContent=input.value.length.toLocaleString()+" / 10,000";});
+  $("clearBtn").addEventListener("click",()=>{input.value="";output.value="";$("sourceCount").textContent="0 / 10,000";$("detectedLabel").textContent="";message("");input.focus();});
+  $("copyBtn").addEventListener("click",async()=>{
+    if(!output.value) return message("There is no translation to copy.","error");
+    try { await navigator.clipboard.writeText(output.value); message("Translation copied.","success"); }
+    catch { output.focus(); output.select(); message("Select and copy the translation.",""); }
+  });
+  $("swapBtn").addEventListener("click",()=>{
+    if(source.value==="auto") return message("Choose a source language before swapping.","error");
+    const old=source.value; source.value=target.value; target.value=old;
+    const oldText=input.value; input.value=output.value; output.value=oldText;
+    $("sourceCount").textContent=input.value.length.toLocaleString()+" / 10,000"; message("");
+  });
+  button.addEventListener("click",async()=>{
+    const text=input.value.trim();
+    if(!text) return message("Enter some text to translate.","error");
+    if(!target.value) return message("Choose a target language.","error");
+    button.disabled=true; button.textContent="Translating…"; message("Working locally. The first translation may take a little longer.");
+    try {
+      let sourceCode=source.value;
+      if(sourceCode==="auto") {
+        const detection=await jsonRequest("./api/detect",{text});
+        if(!detection.detected) throw new Error("Could not detect this language. Please choose it manually.");
+        sourceCode=detection.detected.code;
+        $("detectedLabel").textContent="Detected: "+detection.detected.label;
+      } else $("detectedLabel").textContent=languageMap.get(sourceCode)||sourceCode;
+      if(sourceCode===target.value) output.value=text;
+      else {
+        const result=await jsonRequest("./api/translate",{text,source_language:sourceCode,target_language:target.value,num_beams:4});
+        output.value=result.translation;
       }
-    }
-
-    sourceText.addEventListener("input", handleSourceChange);
-    targetSelect.addEventListener("change", checkModelNotice);
-
-    function showWarning(message) { warningNotice.style.display = "flex"; warningNoticeText.textContent = message; }
-    // Translation runs through the local Python NLLB engine, never a cloud API.
-    translateBtn.addEventListener("click", async () => {
-      const text = sourceText.value.trim(), tgt = targetSelect.value;
-      warningNotice.style.display = "none";
-      if (!text) return showWarning("Enter some text to translate.");
-      if (!tgt) return showWarning("Choose a target language.");
-      await languagesReady;
-      if (languageLoadError) return showWarning(languageLoadError.message);
-      let src = getActiveSourceMode() === "manual" ? manualSourceSelect.value : null;
-      if (!src) { try { const detected = await detectLanguage(text); src = detected && detected.code; } catch (error) { return showWarning(error.message); } }
-      if (!src) return showWarning("Could not detect the source language. Choose it manually.");
-      translateBtn.disabled = true; translateBtn.innerHTML = '<span class="st-spinner"></span>Translating locally...';
-      try {
-        const response = await fetch("./api/translate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, source_language: src, target_language: tgt, num_beams: Number(beamSlider.value) }) });
-        const data = await response.json(); if (!response.ok) throw new Error(data.error || "Translation failed.");
-        targetText.value = data.translation; resultSection.style.display = "block"; expanderTokens.replaceChildren();
-        (data.tokens || []).forEach(token => { const span = document.createElement("span"); span.className = "st-token"; span.textContent = token; expanderTokens.appendChild(span); });
-        resultSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      } catch (error) { showWarning(error.message); }
-      finally { translateBtn.disabled = false; translateBtn.innerHTML = "<span>Translate</span>"; }
-    });
-    // Subword Token Expander toggle
-    expanderHeader.addEventListener("click", () => {
-      tokenExpander.classList.toggle("open");
-      expanderArrow.textContent = tokenExpander.classList.contains("open") ? "▼" : "▶";
-    });
-
-    // Sidebar Controls
-    sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.add("open");
-      sidebarOverlay.style.display = "block";
-    });
-
-    function closeSidebar() {
-      sidebar.classList.remove("open");
-      sidebarOverlay.style.display = "none";
-    }
-
-    sidebarClose.addEventListener("click", closeSidebar);
-    sidebarOverlay.addEventListener("click", closeSidebar);
-
-    beamSlider.addEventListener("input", (e) => {
-      beamDisplay.textContent = e.target.value;
-    });
-
-    // 3-dots Menu Popup Toggle
-    menuToggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      menuPopup.classList.toggle("open");
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!menuPopup.contains(e.target) && e.target !== menuToggle) {
-        menuPopup.classList.remove("open");
-      }
-    });
-
-    // Theme Switcher Logic
-    const themePills = document.querySelectorAll(".theme-pill");
-    themePills.forEach(pill => {
-      pill.addEventListener("click", () => {
-        themePills.forEach(p => p.classList.remove("active"));
-        pill.classList.add("active");
-        const theme = pill.getAttribute("data-theme-val");
-
-        if (theme === "system") {
-          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
-        } else {
-          document.documentElement.setAttribute("data-theme", theme);
-        }
-      });
-    });
-
-    // Rerun button animation (triggers splash screen replay)
-    document.getElementById("rerunBtn").addEventListener("click", () => {
-      menuPopup.classList.remove("open");
-      runSplashScreen(1400);
-    });
-
-    // Clear cache button
-    document.getElementById("clearCacheBtn").addEventListener("click", () => {
-      menuPopup.classList.remove("open");
-      sourceText.value = "";
-      sampleSelect.value = "";
-      targetSelect.value = "";
-      resultSection.style.display = "none";
-      detectionNotice.style.display = "none";
-      modelNotice.style.display = "none";
-      warningNotice.style.display = "none";
-    });
-
-    // ==========================================
-    // PWA & SERVICE WORKER INSTALLATION
-    // ==========================================
-    let deferredPrompt = null;
-    const installAppBtn = document.getElementById("installAppBtn");
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => {
-          console.log('SW registration note:', err);
-        });
-      });
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (installAppBtn) installAppBtn.style.display = "flex";
-    });
-
-    if (installAppBtn) {
-      installAppBtn.addEventListener("click", async () => {
-        menuPopup.classList.remove("open");
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          deferredPrompt = null;
-        } else {
-          alert("📲 Easy Lang Installation Guide:\n\n• On Mobile (Android / iPhone): Tap your browser menu (⋮ in Chrome or Share in Safari) and choose 'Add to Home Screen' or 'Install App'.\n\n• On Windows PC: Double-click 'EasyLang.exe' right in this folder to launch the standalone desktop app!");
-        }
-      });
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener("keydown", (e) => {
-      if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
-      if (e.key === "r" || e.key === "R") {
-        document.getElementById("rerunBtn").click();
-      } else if (e.key === "c" || e.key === "C") {
-        document.getElementById("clearCacheBtn").click();
-      }
-    });
-  </script>
+      message("Translation complete.","success");
+    } catch(error) { message(error.message,"error"); }
+    finally { button.disabled=false; button.textContent="Translate"; }
+  });
+  if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")) {
+    window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+  }
+  initialize();
+})();
+</script>
 </body>
 </html>
