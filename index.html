@@ -1,1079 +1,861 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offline Translator · 200+ Languages</title>
+  <title>Easy Lang · Offfline translator</title>
   <style>
     :root {
-      --bg-primary: #0f172a;
-      --bg-secondary: #1e293b;
-      --bg-card: rgba(30, 41, 59, 0.7);
-      --bg-card-hover: rgba(51, 65, 85, 0.6);
-      --border-color: rgba(148, 163, 184, 0.15);
-      --border-active: #38bdf8;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --accent: #38bdf8;
-      --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
-      --accent-hover: #0284c7;
-      --badge-bg: rgba(56, 189, 248, 0.12);
-      --badge-text: #38bdf8;
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.15);
-      --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-      --glow: 0 0 25px rgba(56, 189, 248, 0.15);
-      --radius-lg: 16px;
-      --radius-md: 10px;
-      --radius-sm: 6px;
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --bg-color: #0e1117;
+      --secondary-bg: #262730;
+      --sidebar-bg: #161922;
+      --card-bg: #262730;
+      --text-color: #fafafa;
+      --text-secondary: #a3a8b8;
+      --text-muted: #808495;
+      --primary-color: #ff4b4b;
+      --primary-hover: #ff3333;
+      --primary-active: #e03a3a;
+      --border-color: #31333F;
+      --border-light: rgba(250, 250, 250, 0.12);
+      --font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --radius: 8px;
+      --info-bg: rgba(2, 136, 209, 0.15);
+      --info-border: #0288d1;
+      --info-text: #81d4fa;
+      --warning-bg: rgba(255, 179, 0, 0.15);
+      --warning-border: #ffb300;
+      --warning-text: #ffe082;
     }
 
     [data-theme="light"] {
-      --bg-primary: #f8fafc;
-      --bg-secondary: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.85);
-      --bg-card-hover: rgba(241, 245, 249, 0.9);
-      --border-color: rgba(203, 213, 225, 0.8);
-      --border-active: #0284c7;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #94a3b8;
-      --accent: #0284c7;
-      --accent-gradient: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
-      --accent-hover: #0369a1;
-      --badge-bg: rgba(2, 132, 199, 0.1);
-      --badge-text: #0284c7;
-      --success: #059669;
-      --success-bg: rgba(5, 150, 105, 0.1);
-      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
-      --glow: 0 0 20px rgba(2, 132, 199, 0.1);
+      --bg-color: #ffffff;
+      --secondary-bg: #f0f2f6;
+      --sidebar-bg: #f8f9fb;
+      --card-bg: #f0f2f6;
+      --text-color: #31333F;
+      --text-secondary: #555867;
+      --text-muted: #808495;
+      --border-color: #d6d9e0;
+      --border-light: rgba(0, 0, 0, 0.1);
+      --info-bg: #e1f5fe;
+      --info-border: #0288d1;
+      --info-text: #0277bd;
+      --warning-bg: #fff8e1;
+      --warning-border: #ffb300;
+      --warning-text: #b78103;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
     body {
       font-family: var(--font-family);
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
+      background-color: var(--bg-color);
+      color: var(--text-color);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      line-height: 1.5;
-      padding: 0;
+      position: relative;
       overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.5;
     }
 
-    /* Ambient background glow */
-    .ambient-bg {
-      position: fixed;
-      top: -20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 800px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Header */
-    header {
-      position: relative;
-      z-index: 10;
-      backdrop-filter: blur(12px);
-      background-color: rgba(15, 23, 42, 0.7);
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 2rem;
+    /* Top Navigation Bar */
+    .st-header {
+      height: 52px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
+      padding: 0 1.25rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: var(--bg-color);
     }
 
-    [data-theme="light"] header {
-      background-color: rgba(255, 255, 255, 0.8);
-    }
-
-    .brand {
+    .st-header-left {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
     }
 
-    .brand-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--accent-gradient);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
-      color: #fff;
-    }
-
-    .brand-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .brand-tagline {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: var(--success-bg);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--success);
-      box-shadow: 0 0 8px var(--success);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: 0.6;
-        transform: scale(0.9);
-      }
-    }
-
-    .icon-btn {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 8px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 38px;
-      height: 38px;
-    }
-
-    .icon-btn:hover {
-      background: var(--bg-card-hover);
-      color: var(--text-primary);
-      border-color: var(--accent);
-    }
-
-    /* Main Container */
-    main {
-      position: relative;
-      z-index: 1;
-      max-width: 1100px;
-      width: 100%;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-      flex: 1;
-    }
-
-    /* Sample Sentences Bar */
-    .samples-bar {
-      margin-bottom: 1.5rem;
+    .st-header-right {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      flex-wrap: wrap;
+      position: relative;
     }
 
-    .samples-label {
-      font-size: 0.8rem;
-      font-weight: 600;
+    .icon-button {
+      background: transparent;
+      border: none;
       color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .sample-pill {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: 6px 12px;
-      border-radius: 9999px;
-      font-size: 0.8rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      padding: 6px 8px;
+      border-radius: var(--radius);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: background-color 0.15s, color 0.15s;
     }
 
-    .sample-pill:hover {
-      border-color: var(--accent);
-      color: var(--text-primary);
-      transform: translateY(-1px);
+    .icon-button:hover {
+      background-color: var(--secondary-bg);
+      color: var(--text-color);
     }
 
-    /* Translator Grid */
-    .translator-grid {
+    /* Streamlit ⋮ Popup Menu */
+    .st-menu-popup {
+      position: absolute;
+      top: 48px;
+      right: 0;
+      width: 260px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      padding: 0.75rem 0.6rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.35rem;
+      z-index: 200;
+    }
+
+    .st-menu-popup.open {
+      display: flex;
+    }
+
+    /* Theme pill switcher */
+    .theme-selector {
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 1rem;
-      align-items: stretch;
-      margin-bottom: 1.5rem;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: var(--bg-color);
+      border-radius: 6px;
+      padding: 3px;
+      margin-bottom: 0.5rem;
+      gap: 3px;
     }
 
-    @media (max-width: 860px) {
-      .translator-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Translation Card */
-    .card {
-      background: var(--bg-card);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--card-shadow);
+    .theme-pill {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 6px 4px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border-radius: 4px;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      min-height: 290px;
+      align-items: center;
+      gap: 4px;
+      font-family: inherit;
     }
 
-    .card:focus-within {
-      border-color: var(--border-active);
-      box-shadow: var(--glow), var(--card-shadow);
+    .theme-pill.active {
+      background: var(--secondary-bg);
+      color: var(--text-color);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     }
 
-    .card-header {
-      padding: 0.85rem 1.25rem;
-      border-bottom: 1px solid var(--border-color);
+    .menu-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(0, 0, 0, 0.08);
-      gap: 0.75rem;
+      padding: 7px 10px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      color: var(--text-color);
+      cursor: pointer;
+      text-decoration: none;
     }
 
-    [data-theme="light"] .card-header {
-      background: rgba(0, 0, 0, 0.02);
+    .menu-item:hover {
+      background-color: rgba(255, 255, 255, 0.05);
     }
 
-    .select-wrapper {
+    [data-theme="light"] .menu-item:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    .menu-item .shortcut {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+
+    .menu-divider {
+      height: 1px;
+      background-color: var(--border-light);
+      margin: 4px 0;
+    }
+
+    .menu-footer {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 6px 10px 2px;
+    }
+
+    /* Switch toggle */
+    .switch {
       position: relative;
+      display: inline-block;
+      width: 32px;
+      height: 18px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #4c4f5a;
+      transition: .2s;
+      border-radius: 18px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(14px);
+    }
+
+    /* Sidebar */
+    .st-sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 150;
+      display: none;
+    }
+
+    .st-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 320px;
+      background-color: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      z-index: 160;
+      padding: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .st-sidebar.open {
+      transform: translateX(0);
+    }
+
+    .st-sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .st-sidebar-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* Main Content Container (Streamlit centered layout) */
+    .st-container {
+      max-width: 730px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 4rem;
       flex: 1;
     }
 
-    select.lang-select {
-      width: 100%;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      padding: 8px 30px 8px 12px;
-      border-radius: var(--radius-md);
-      font-size: 0.85rem;
-      font-weight: 500;
+    /* Streamlit Title & Headers */
+    .st-title {
+      font-size: 2.35rem;
+      font-weight: 700;
+      color: var(--text-color);
+      line-height: 1.25;
+      margin-bottom: 0.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .st-anchor {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      font-weight: normal;
+      opacity: 0.6;
       cursor: pointer;
+    }
+
+    .st-anchor:hover {
+      opacity: 1;
+      color: var(--primary-color);
+    }
+
+    .st-subtitle {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    .st-caption {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.75rem;
+      line-height: 1.5;
+    }
+
+    /* Streamlit Form Groups & Inputs */
+    .st-form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .st-label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-color);
+      margin-bottom: 0.4rem;
+      font-weight: 400;
+    }
+
+    .st-select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .st-select {
+      width: 100%;
+      height: 42px;
+      background-color: var(--secondary-bg);
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      color: var(--text-color);
+      font-family: inherit;
+      font-size: 0.92rem;
+      padding: 0 2.2rem 0 0.9rem;
       outline: none;
       appearance: none;
       -webkit-appearance: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
     }
 
-    select.lang-select:focus {
-      border-color: var(--accent);
+    .st-select:focus {
+      border-color: var(--primary-color);
     }
 
-    .select-arrow {
+    .st-select-arrow {
       position: absolute;
-      right: 10px;
+      right: 12px;
       top: 50%;
       transform: translateY(-50%);
       pointer-events: none;
       color: var(--text-secondary);
-      font-size: 0.7rem;
-    }
-
-    .detected-badge {
-      font-size: 0.72rem;
-      color: var(--accent);
-      background: var(--badge-bg);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-weight: 500;
-      display: none;
-      white-space: nowrap;
-    }
-
-    .card-body {
-      flex: 1;
-      display: flex;
-      position: relative;
-      padding: 1.25rem;
-    }
-
-    textarea.text-area {
-      width: 100%;
-      height: 100%;
-      min-height: 170px;
-      background: transparent;
-      border: none;
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      resize: vertical;
-      outline: none;
-    }
-
-    textarea.text-area::placeholder {
-      color: var(--text-muted);
-    }
-
-    .card-footer {
-      padding: 0.75rem 1.25rem;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    .footer-left,
-    .footer-right {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .counter {
       font-size: 0.75rem;
+    }
+
+    .st-textarea {
+      width: 100%;
+      min-height: 140px;
+      background-color: var(--secondary-bg);
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      color: var(--text-color);
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      padding: 0.75rem 0.9rem;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    .st-textarea:focus {
+      border-color: var(--primary-color);
+    }
+
+    .st-textarea::placeholder {
       color: var(--text-muted);
     }
 
-    .action-icon-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      cursor: pointer;
-      padding: 6px;
-      border-radius: var(--radius-sm);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      transition: all 0.15s ease;
-    }
-
-    .action-icon-btn:hover {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-    }
-
-    .action-icon-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    /* Swap button */
-    .swap-container {
+    /* Streamlit Radio Buttons (Horizontal) */
+    .st-radio-group {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 1.75rem;
+      margin-top: 0.25rem;
     }
 
-    .swap-btn {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .swap-btn:hover {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      transform: rotate(180deg) scale(1.05);
-    }
-
-    /* Control Panel */
-    .controls-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.25rem;
-    }
-
-    .control-group {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .control-item {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    .slider-input {
-      accent-color: var(--accent);
-      cursor: pointer;
-    }
-
-    .slider-value {
-      font-weight: 600;
-      color: var(--text-primary);
-      min-width: 14px;
-    }
-
-    .translate-btn {
-      background: var(--accent-gradient);
-      color: #ffffff;
-      border: none;
-      padding: 10px 24px;
-      border-radius: var(--radius-md);
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
+    .st-radio-label {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
-      transition: all 0.2s ease;
-    }
-
-    .translate-btn:hover {
-      filter: brightness(1.1);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
-    }
-
-    .translate-btn:active {
-      transform: translateY(1px);
-    }
-
-    .translate-btn.loading svg {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Subword Tokens Inspector */
-    .tokens-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 1rem 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .tokens-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       cursor: pointer;
+      font-size: 0.92rem;
+      color: var(--text-color);
       user-select: none;
     }
 
-    .tokens-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-secondary);
+    .st-radio-input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 17px;
+      height: 17px;
+      border: 2px solid var(--text-muted);
+      border-radius: 50%;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .st-radio-input:checked {
+      border-color: var(--primary-color);
+    }
+
+    .st-radio-input:checked::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+    }
+
+    /* Streamlit Primary Button */
+    .st-button {
+      width: 100%;
+      height: 42px;
+      background-color: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1rem;
+      transition: background-color 0.15s, transform 0.05s;
+    }
+
+    .st-button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .st-button:active {
+      background-color: var(--primary-active);
+      transform: scale(0.99);
+    }
+
+    /* Streamlit Alerts / Info boxes */
+    .st-alert {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      line-height: 1.45;
+    }
+
+    .st-alert.info {
+      background-color: var(--info-bg);
+      border-left: 4px solid var(--info-border);
+      color: var(--info-text);
+    }
+
+    .st-alert.warning {
+      background-color: var(--warning-bg);
+      border-left: 4px solid var(--warning-border);
+      color: var(--warning-text);
+    }
+
+    /* Streamlit Expander */
+    .st-expander {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      margin-top: 1rem;
+      overflow: hidden;
+      background: var(--bg-color);
+    }
+
+    .st-expander-header {
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-    }
-
-    .tokens-body {
-      margin-top: 1rem;
-      display: none;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .token-chip {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--accent);
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      font-family: monospace;
-    }
-
-    /* Info Banner */
-    .info-banner {
-      background: rgba(56, 189, 248, 0.05);
-      border: 1px solid rgba(56, 189, 248, 0.15);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
       font-size: 0.85rem;
-      color: var(--text-secondary);
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
+      color: var(--text-color);
+      user-select: none;
+      background: var(--secondary-bg);
     }
 
-    .info-banner code {
-      background: var(--bg-secondary);
+    .st-expander-content {
+      padding: 0.85rem 1rem;
+      display: none;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      line-height: 1.6;
+      word-break: break-all;
+    }
+
+    .st-expander.open .st-expander-content {
+      display: block;
+    }
+
+    .st-token {
+      background: var(--secondary-bg);
       padding: 2px 6px;
       border-radius: 4px;
-      color: var(--accent);
-      font-family: monospace;
-      font-size: 0.82rem;
+      margin: 2px 3px;
+      display: inline-block;
+      border: 1px solid var(--border-light);
     }
 
-    /* Toast notification */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 1px solid var(--accent);
-      padding: 10px 18px;
-      border-radius: var(--radius-md);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      font-size: 0.85rem;
-      z-index: 1000;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.25s ease;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    /* Range slider in sidebar */
+    .st-slider {
+      width: 100%;
+      accent-color: var(--primary-color);
+      cursor: pointer;
     }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
+    /* Spinner */
+    .st-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
-
 <body>
-  <div class="ambient-bg"></div>
 
-  <!-- Header -->
-  <header>
-    <div class="brand">
-      <div class="brand-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="2" y1="12" x2="22" y2="12"></line>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-        </svg>
-      </div>
-      <div>
-        <div class="brand-title">Offline Translator</div>
-        <div class="brand-tagline">NLLB-200 Multilingual · 100% On-Device & Private</div>
-      </div>
-    </div>
-
-    <div class="header-actions">
-      <div class="status-badge" id="engineStatusBadge" title="Model weights & inference run locally">
-        <span class="status-dot"></span>
-        <span>Offline Engine Ready</span>
-      </div>
-
-      <button class="icon-btn" id="themeToggleBtn" title="Toggle dark/light mode">
-        <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  <!-- Top Streamlit Navigation Bar -->
+  <header class="st-header">
+    <div class="st-header-left">
+      <!-- Sidebar collapse toggle: >> -->
+      <button class="icon-button" id="sidebarToggle" title="Open sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13 17 18 12 13 7"></polyline>
+          <polyline points="6 17 11 12 6 7"></polyline>
         </svg>
       </button>
+    </div>
+
+    <div class="st-header-right">
+      <!-- NO Deploy button (as requested) -->
+
+      <!-- Streamlit 3-dots Menu button -->
+      <button class="icon-button" id="menuToggle" title="Settings and options">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="1.5"></circle>
+          <circle cx="12" cy="5" r="1.5"></circle>
+          <circle cx="12" cy="19" r="1.5"></circle>
+        </svg>
+      </button>
+
+      <!-- Exact Streamlit Dropdown Menu Popup -->
+      <div class="st-menu-popup" id="menuPopup">
+        <!-- Theme Switcher Pills -->
+        <div class="theme-selector">
+          <button class="theme-pill" data-theme-val="system">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18V4c4.41 0 8 3.59 8 8s-3.59 8-8 8z"></path>
+            </svg>
+            <span>System</span>
+          </button>
+          <button class="theme-pill" data-theme-val="light">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+            <span>Light</span>
+          </button>
+          <button class="theme-pill active" data-theme-val="dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <span>Dark</span>
+          </button>
+        </div>
+
+        <div class="menu-item" id="rerunBtn">
+          <span>Rerun</span>
+          <span class="shortcut">R</span>
+        </div>
+
+        <div class="menu-item">
+          <span>Auto rerun</span>
+          <label class="switch">
+            <input type="checkbox" id="autoRerunToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <div class="menu-item" id="clearCacheBtn">
+          <span>Clear cache</span>
+          <span class="shortcut">C</span>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <div class="menu-item" onclick="window.print()">
+          <span>Print</span>
+        </div>
+
+        <div class="menu-item" id="recordScreenBtn">
+          <span>Record screen</span>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <div class="menu-footer">Made with Streamlit v1.67.0</div>
+      </div>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main>
-    <!-- Sample Sentences -->
-    <div class="samples-bar">
-      <span class="samples-label">Quick Samples:</span>
-      <button class="sample-pill" data-text="Clean water is important for health.">Clean water</button>
-      <button class="sample-pill" data-text="Farmers wait for the monsoon rain.">Monsoon rain</button>
-      <button class="sample-pill" data-text="Every child deserves quality education.">Quality education</button>
-      <button class="sample-pill" data-text="Technology brings people closer together across all languages.">Global
-        technology</button>
+  <!-- Sidebar Component -->
+  <div class="st-sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="st-sidebar" id="sidebar">
+    <div class="st-sidebar-header">
+      <h2>Settings</h2>
+      <button class="icon-button" id="sidebarClose">✕</button>
     </div>
 
-    <!-- Translator Card Grid -->
-    <div class="translator-grid">
-      <!-- Source Panel -->
-      <div class="card">
-        <div class="card-header">
-          <div class="select-wrapper">
-            <select id="sourceLang" class="lang-select">
-              <option value="auto">Auto-detect Language</option>
-              <optgroup label="Popular Languages">
-                <option value="eng_Latn" selected>English (Latin, eng_Latn)</option>
-                <option value="hin_Deva">Hindi (Devanagari, hin_Deva)</option>
-                <option value="spa_Latn">Spanish (Latin, spa_Latn)</option>
-                <option value="fra_Latn">French (Latin, fra_Latn)</option>
-                <option value="deu_Latn">German (Latin, deu_Latn)</option>
-                <option value="zho_Hans">Chinese (Simplified, zho_Hans)</option>
-                <option value="ben_Beng">Bengali (Bengali, ben_Beng)</option>
-                <option value="arb_Arab">Arabic (Arabic, arb_Arab)</option>
-                <option value="rus_Cyrl">Russian (Cyrillic, rus_Cyrl)</option>
-                <option value="jpn_Jpan">Japanese (Japanese, jpn_Jpan)</option>
-                <option value="por_Latn">Portuguese (Latin, por_Latn)</option>
-                <option value="urd_Arab">Urdu (Arabic, urd_Arab)</option>
-              </optgroup>
-              <optgroup label="All NLLB-200 Languages" id="allSourceLangs"></optgroup>
-            </select>
-            <span class="select-arrow">▼</span>
-          </div>
-          <span class="detected-badge" id="detectedBadge">Detected: English</span>
-        </div>
+    <div>
+      <label class="st-label">Beam search width: <strong id="beamDisplay">4</strong></label>
+      <input type="range" class="st-slider" id="beamSlider" min="1" max="6" value="4" step="1">
+    </div>
 
-        <div class="card-body">
-          <textarea id="sourceText" class="text-area" placeholder="Type or paste text to translate..."
-            spellcheck="false">Clean water is important for health.</textarea>
-        </div>
+    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1rem;">
+      <p>Device: <strong>CPU</strong></p>
+      <p style="margin-top: 0.4rem;">Model files stay on the hosting computer.</p>
+    </div>
+  </aside>
 
-        <div class="card-footer">
-          <div class="footer-left">
-            <button class="action-icon-btn" id="pasteBtn" title="Paste from clipboard">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-              </svg>
-            </button>
-            <button class="action-icon-btn" id="clearBtn" title="Clear text">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-            <button class="action-icon-btn" id="speakSourceBtn" title="Listen (Text to Speech)">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              </svg>
-            </button>
-          </div>
-          <div class="footer-right">
-            <span class="counter" id="sourceCounter">35 characters</span>
-          </div>
-        </div>
-      </div>
+  <!-- Centered Streamlit Content -->
+  <main class="st-container">
+    <!-- Title -->
+    <h1 class="st-title">
+      <span>Easy Lang</span>
+      <span class="st-anchor" title="Copy anchor link">🔗</span>
+    </h1>
 
-      <!-- Center Swap Button -->
-      <div class="swap-container">
-        <button class="swap-btn" id="swapBtn" title="Swap languages">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="m7 16-4-4 4-4"></path>
-            <path d="m17 8 4 4-4 4"></path>
-            <path d="M3 12h18"></path>
-          </svg>
-        </button>
-      </div>
+    <!-- Subtitle requested -->
+    <div class="st-subtitle">Offfline translator</div>
 
-      <!-- Target Panel -->
-      <div class="card">
-        <div class="card-header">
-          <div class="select-wrapper">
-            <select id="targetLang" class="lang-select">
-              <optgroup label="Popular Languages">
-                <option value="hin_Deva" selected>Hindi (Devanagari, hin_Deva)</option>
-                <option value="eng_Latn">English (Latin, eng_Latn)</option>
-                <option value="ben_Beng">Bengali (Bengali, ben_Beng)</option>
-                <option value="spa_Latn">Spanish (Latin, spa_Latn)</option>
-                <option value="fra_Latn">French (Latin, fra_Latn)</option>
-                <option value="deu_Latn">German (Latin, deu_Latn)</option>
-                <option value="zho_Hans">Chinese (Simplified, zho_Hans)</option>
-                <option value="arb_Arab">Arabic (Arabic, arb_Arab)</option>
-                <option value="rus_Cyrl">Russian (Cyrillic, rus_Cyrl)</option>
-                <option value="jpn_Jpan">Japanese (Japanese, jpn_Jpan)</option>
-                <option value="por_Latn">Portuguese (Latin, por_Latn)</option>
-                <option value="urd_Arab">Urdu (Arabic, urd_Arab)</option>
-              </optgroup>
-              <optgroup label="All NLLB-200 Languages" id="allTargetLangs"></optgroup>
-            </select>
-            <span class="select-arrow">▼</span>
-          </div>
-        </div>
+    <!-- Caption line from original Streamlit app -->
+    <div class="st-caption">
+      Translate between 200+ languages · Detection and translation run offline on the hosting computer.
+    </div>
 
-        <div class="card-body">
-          <textarea id="targetText" class="text-area" placeholder="Translation will appear here..."
-            readonly>स्वच्छ जल स्वास्थ्य के लिए महत्वपूर्ण है।</textarea>
-        </div>
-
-        <div class="card-footer">
-          <div class="footer-left">
-            <button class="action-icon-btn" id="copyTargetBtn" title="Copy translation">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-            </button>
-            <button class="action-icon-btn" id="speakTargetBtn" title="Listen (Text to Speech)">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-              </svg>
-            </button>
-          </div>
-          <div class="footer-right">
-            <span class="counter" id="targetCounter">36 characters</span>
-          </div>
-        </div>
+    <!-- Try a sample sentence -->
+    <div class="st-form-group">
+      <label class="st-label" for="sampleSelect">Try a sample sentence</label>
+      <div class="st-select-wrapper">
+        <select class="st-select" id="sampleSelect">
+          <option value="">Custom input...</option>
+          <option value="Clean water is important for health.">Clean water is important for health.</option>
+          <option value="Farmers wait for the monsoon rain.">Farmers wait for the monsoon rain.</option>
+          <option value="Every child deserves quality education.">Every child deserves quality education.</option>
+        </select>
+        <span class="st-select-arrow">⌵</span>
       </div>
     </div>
 
-    <!-- Control Panel -->
-    <div class="controls-panel">
-      <div class="control-group">
-        <div class="control-item">
-          <span>Beam Search Width:</span>
-          <input type="range" id="beamWidth" class="slider-input" min="1" max="6" value="4" step="1">
-          <span class="slider-value" id="beamVal">4</span>
-        </div>
-        <div class="control-item">
-          <span>Model:</span>
-          <strong style="color: var(--text-primary); font-size: 0.8rem;">nllb-200-distilled-600M</strong>
-        </div>
-      </div>
-
-      <button class="translate-btn" id="translateBtn">
-        <svg id="btnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m5 12 7-7 7 7"></path>
-          <path d="M12 19V5"></path>
-        </svg>
-        <span>Translate Now</span>
-      </button>
+    <!-- Text to translate -->
+    <div class="st-form-group">
+      <label class="st-label" for="sourceText">Text to translate</label>
+      <textarea class="st-textarea" id="sourceText" placeholder="Type or paste text here" spellcheck="false"></textarea>
     </div>
 
-    <!-- Subword Tokens Inspector -->
-    <div class="tokens-section">
-      <div class="tokens-header" id="tokensToggle">
-        <div class="tokens-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="4 7 4 4 20 4 20 7"></polyline>
-            <line x1="9" y1="20" x2="15" y2="20"></line>
-            <line x1="12" y1="4" x2="12" y2="20"></line>
-          </svg>
-          <span>Inspect NLLB Subword Tokens (SentencePiece)</span>
-        </div>
-        <span id="tokensArrow" style="color: var(--text-muted); font-size: 0.8rem;">▼ Show</span>
+    <!-- Source language radio group -->
+    <div class="st-form-group">
+      <label class="st-label">Source language</label>
+      <div class="st-radio-group">
+        <label class="st-radio-label">
+          <input type="radio" class="st-radio-input" name="sourceMode" value="auto" checked>
+          <span>Auto-detect</span>
+        </label>
+        <label class="st-radio-label">
+          <input type="radio" class="st-radio-input" name="sourceMode" value="manual">
+          <span>Choose manually</span>
+        </label>
       </div>
-      <div class="tokens-body" id="tokensList"></div>
     </div>
 
-    <!-- Info Banner -->
-    <div class="info-banner">
-      <svg style="flex-shrink:0; margin-top: 2px;" width="18" height="18" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="16" x2="12" y2="12"></line>
-        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-      </svg>
-      <div>
-        <strong>Local Hosting &amp; Python App:</strong> You can also run the full native Python Streamlit engine on
-        your machine with <code>streamlit run app.py</code> or access it from phones on your local Wi-Fi. All weights
-        and processing remain completely offline and private.
+    <!-- Manual source selector (hidden when auto-detect is on) -->
+    <div class="st-form-group" id="manualSourceGroup" style="display: none;">
+      <label class="st-label" for="manualSourceLang">Choose the source language</label>
+      <div class="st-select-wrapper">
+        <select class="st-select" id="manualSourceLang"></select>
+        <span class="st-select-arrow">⌵</span>
+      </div>
+    </div>
+
+    <!-- Auto-detect alert info box -->
+    <div id="detectionNotice" class="st-alert info" style="display: none;">
+      <span>ℹ️</span>
+      <span id="detectionNoticeText">Detected: English (Latin, eng_Latn). Choose manually if this is incorrect.</span>
+    </div>
+
+    <!-- Translate into select -->
+    <div class="st-form-group">
+      <label class="st-label" for="targetLang">Translate into</label>
+      <div class="st-select-wrapper">
+        <select class="st-select" id="targetLang">
+          <option value="">Choose a target language...</option>
+        </select>
+        <span class="st-select-arrow">⌵</span>
+      </div>
+    </div>
+
+    <!-- Model Status Notice -->
+    <div id="modelNotice" class="st-alert info" style="display: none;">
+      <span>ℹ️</span>
+      <span>Using: Pretrained multilingual model</span>
+    </div>
+
+    <!-- Warning container -->
+    <div id="warningNotice" class="st-alert warning" style="display: none;">
+      <span>⚠️</span>
+      <span id="warningNoticeText">Enter some text to translate.</span>
+    </div>
+
+    <!-- Translate Button -->
+    <button class="st-button" id="translateBtn">
+      <span>Translate</span>
+    </button>
+
+    <!-- Translation Result Section -->
+    <div id="resultSection" style="display: none; margin-top: 2rem;">
+      <h3 style="font-size: 1.35rem; font-weight: 600; margin-bottom: 0.65rem;">Translation</h3>
+      <textarea class="st-textarea" id="targetText" readonly style="margin-bottom: 1rem;"></textarea>
+
+      <!-- Expander: Inspect subword tokens -->
+      <div class="st-expander" id="tokenExpander">
+        <div class="st-expander-header" id="expanderHeader">
+          <span id="expanderArrow">▶</span>
+          <span>Inspect subword tokens</span>
+        </div>
+        <div class="st-expander-content" id="expanderTokens"></div>
       </div>
     </div>
   </main>
 
-  <div class="toast" id="toast">Translation copied to clipboard!</div>
-
-  <!-- Translation & UI Script -->
   <script>
-    // 200+ NLLB language dictionary mapping
-    const NLLB_LANGUAGES = [
-      { code: "ace_Arab", name: "Acehnese (Arabic)" },
-      { code: "ace_Latn", name: "Acehnese (Latin)" },
-      { code: "acm_Arab", name: "Mesopotamian Arabic" },
-      { code: "acq_Arab", name: "Ta'izzi-Adeni Arabic" },
-      { code: "aeb_Arab", name: "Tunisian Arabic" },
-      { code: "afr_Latn", name: "Afrikaans (Latin)" },
-      { code: "ajp_Arab", name: "South Levantine Arabic" },
-      { code: "aka_Latn", name: "Akan (Latin)" },
-      { code: "amh_Ethi", name: "Amharic (Ethiopic)" },
-      { code: "apc_Arab", name: "North Levantine Arabic" },
-      { code: "arb_Arab", name: "Standard Arabic (Arabic)" },
-      { code: "ars_Arab", name: "Najdi Arabic" },
-      { code: "ary_Arab", name: "Moroccan Arabic" },
-      { code: "arz_Arab", name: "Egyptian Arabic" },
-      { code: "asm_Beng", name: "Assamese (Bengali)" },
-      { code: "ast_Latn", name: "Asturian (Latin)" },
-      { code: "awa_Deva", name: "Awadhi (Devanagari)" },
-      { code: "ayr_Latn", name: "Central Aymara (Latin)" },
-      { code: "azb_Arab", name: "South Azerbaijani (Arabic)" },
-      { code: "azj_Latn", name: "North Azerbaijani (Latin)" },
-      { code: "bak_Cyrl", name: "Bashkir (Cyrillic)" },
-      { code: "bam_Latn", name: "Bambara (Latin)" },
-      { code: "ban_Latn", name: "Balinese (Latin)" },
-      { code: "bel_Cyrl", name: "Belarusian (Cyrillic)" },
-      { code: "bem_Latn", name: "Bemba (Latin)" },
-      { code: "ben_Beng", name: "Bengali (Bengali)" },
-      { code: "bho_Deva", name: "Bhojpuri (Devanagari)" },
-      { code: "bjn_Arab", name: "Banjar (Arabic)" },
-      { code: "bjn_Latn", name: "Banjar (Latin)" },
-      { code: "bod_Tibt", name: "Tibetan (Tibetan)" },
-      { code: "bos_Latn", name: "Bosnian (Latin)" },
-      { code: "bug_Latn", name: "Buginese (Latin)" },
-      { code: "bul_Cyrl", name: "Bulgarian (Cyrillic)" },
-      { code: "cat_Latn", name: "Catalan (Latin)" },
-      { code: "ceb_Latn", name: "Cebuano (Latin)" },
-      { code: "ces_Latn", name: "Czech (Latin)" },
-      { code: "cjk_Latn", name: "Chokwe (Latin)" },
-      { code: "ckb_Arab", name: "Central Kurdish (Arabic)" },
-      { code: "crh_Latn", name: "Crimean Tatar (Latin)" },
-      { code: "cym_Latn", name: "Welsh (Latin)" },
-      { code: "dan_Latn", name: "Danish (Latin)" },
-      { code: "deu_Latn", name: "German (Latin)" },
-      { code: "dik_Latn", name: "Dinka (Latin)" },
-      { code: "dyu_Latn", name: "Dyula (Latin)" },
-      { code: "dzo_Tibt", name: "Dzongkha (Tibetan)" },
-      { code: "ell_Grek", name: "Greek (Greek)" },
-      { code: "eng_Latn", name: "English (Latin)" },
-      { code: "epo_Latn", name: "Esperanto (Latin)" },
-      { code: "est_Latn", name: "Estonian (Latin)" },
-      { code: "eus_Latn", name: "Basque (Latin)" },
-      { code: "ewe_Latn", name: "Ewe (Latin)" },
-      { code: "fao_Latn", name: "Faroese (Latin)" },
-      { code: "pes_Arab", name: "Iranian Persian (Arabic)" },
-      { code: "fij_Latn", name: "Fijian (Latin)" },
-      { code: "fin_Latn", name: "Finnish (Latin)" },
-      { code: "fon_Latn", name: "Fon (Latin)" },
-      { code: "fra_Latn", name: "French (Latin)" },
-      { code: "fur_Latn", name: "Friulian (Latin)" },
-      { code: "fuv_Latn", name: "Nigerian Fulfulde (Latin)" },
-      { code: "gla_Latn", name: "Scottish Gaelic (Latin)" },
-      { code: "gle_Latn", name: "Irish (Latin)" },
-      { code: "glg_Latn", name: "Galician (Latin)" },
-      { code: "grn_Latn", name: "Guarani (Latin)" },
-      { code: "guj_Gujr", name: "Gujarati (Gujarati)" },
-      { code: "hat_Latn", name: "Haitian Creole (Latin)" },
-      { code: "hau_Latn", name: "Hausa (Latin)" },
-      { code: "heb_Hebr", name: "Hebrew (Hebrew)" },
-      { code: "hin_Deva", name: "Hindi (Devanagari)" },
-      { code: "hne_Deva", name: "Chhattisgarhi (Devanagari)" },
-      { code: "hrv_Latn", name: "Croatian (Latin)" },
-      { code: "hun_Latn", name: "Hungarian (Latin)" },
-      { code: "hye_Armn", name: "Armenian (Armenian)" },
-      { code: "ibo_Latn", name: "Igbo (Latin)" },
-      { code: "ilo_Latn", name: "Iloko (Latin)" },
-      { code: "ind_Latn", name: "Indonesian (Latin)" },
-      { code: "isl_Latn", name: "Icelandic (Latin)" },
-      { code: "ita_Latn", name: "Italian (Latin)" },
-      { code: "jav_Latn", name: "Javanese (Latin)" },
-      { code: "jpn_Jpan", name: "Japanese (Japanese)" },
-      { code: "kab_Latn", name: "Kabyle (Latin)" },
-      { code: "kac_Latn", name: "Jingpho (Latin)" },
-      { code: "kam_Latn", name: "Kamba (Latin)" },
-      { code: "kan_Knda", name: "Kannada (Kannada)" },
-      { code: "kas_Arab", name: "Kashmiri (Arabic)" },
-      { code: "kas_Deva", name: "Kashmiri (Devanagari)" },
-      { code: "kat_Geor", name: "Georgian (Georgian)" },
-      { code: "knc_Arab", name: "Central Kanuri (Arabic)" },
-      { code: "knc_Latn", name: "Central Kanuri (Latin)" },
-      { code: "kaz_Cyrl", name: "Kazakh (Cyrillic)" },
-      { code: "kbp_Latn", name: "Kabiyè (Latin)" },
-      { code: "kea_Latn", name: "Kabuverdianu (Latin)" },
-      { code: "khm_Khmr", name: "Khmer (Khmer)" },
-      { code: "kik_Latn", name: "Kikuyu (Latin)" },
-      { code: "kin_Latn", name: "Kinyarwanda (Latin)" },
-      { code: "kir_Cyrl", name: "Kyrgyz (Cyrillic)" },
-      { code: "kmb_Latn", name: "Kimbundu (Latin)" },
-      { code: "kon_Latn", name: "Kongo (Latin)" },
-      { code: "kor_Hang", name: "Korean (Hangul)" },
-      { code: "kmr_Latn", name: "Northern Kurdish (Latin)" },
-      { code: "lao_Laoo", name: "Lao (Lao)" },
-      { code: "lvs_Latn", name: "Standard Latvian (Latin)" },
-      { code: "lij_Latn", name: "Ligurian (Latin)" },
-      { code: "lim_Latn", name: "Limburgish (Latin)" },
-      { code: "lin_Latn", name: "Lingala (Latin)" },
-      { code: "lit_Latn", name: "Lithuanian (Latin)" },
-      { code: "lmo_Latn", name: "Lombard (Latin)" },
-      { code: "ltg_Latn", name: "Latgalian (Latin)" },
-      { code: "ltz_Latn", name: "Luxembourgish (Latin)" },
-      { code: "lua_Latn", name: "Luba-Kasai (Latin)" },
-      { code: "lug_Latn", name: "Ganda (Latin)" },
-      { code: "luo_Latn", name: "Luo (Latin)" },
-      { code: "lus_Latn", name: "Mizo (Latin)" },
-      { code: "mag_Deva", name: "Magahi (Devanagari)" },
-      { code: "mai_Deva", name: "Maithili (Devanagari)" },
-      { code: "mal_Mlym", name: "Malayalam (Malayalam)" },
-      { code: "mar_Deva", name: "Marathi (Devanagari)" },
-      { code: "min_Latn", name: "Minangkabau (Latin)" },
-      { code: "mkd_Cyrl", name: "Macedonian (Cyrillic)" },
-      { code: "plt_Latn", name: "Plateau Malagasy (Latin)" },
-      { code: "mlt_Latn", name: "Maltese (Latin)" },
-      { code: "mni_Beng", name: "Meitei (Bengali)" },
-      { code: "khk_Cyrl", name: "Halh Mongolian (Cyrillic)" },
-      { code: "mos_Latn", name: "Mossi (Latin)" },
-      { code: "mri_Latn", name: "Maori (Latin)" },
-      { code: "zsm_Latn", name: "Standard Malay (Latin)" },
-      { code: "mya_Mymr", name: "Burmese (Myanmar)" },
-      { code: "nld_Latn", name: "Dutch (Latin)" },
-      { code: "nno_Latn", name: "Norwegian Nynorsk (Latin)" },
-      { code: "nob_Latn", name: "Norwegian Bokmål (Latin)" },
-      { code: "npi_Deva", name: "Nepali (Devanagari)" },
-      { code: "nso_Latn", name: "Northern Sotho (Latin)" },
-      { code: "nus_Latn", name: "Nuer (Latin)" },
-      { code: "nya_Latn", name: "Nyanja (Latin)" },
-      { code: "oci_Latn", name: "Occitan (Latin)" },
-      { code: "gaz_Latn", name: "West Central Oromo (Latin)" },
-      { code: "ory_Orya", name: "Odia (Odia)" },
-      { code: "pag_Latn", name: "Pangasinan (Latin)" },
-      { code: "pan_Guru", name: "Eastern Panjabi (Gurmukhi)" },
-      { code: "pap_Latn", name: "Papiamento (Latin)" },
-      { code: "pol_Latn", name: "Polish (Latin)" },
-      { code: "por_Latn", name: "Portuguese (Latin)" },
-      { code: "prs_Arab", name: "Dari (Arabic)" },
-      { code: "pbt_Arab", name: "Southern Pashto (Arabic)" },
-      { code: "quy_Latn", name: "Ayacucho Quechua (Latin)" },
-      { code: "ron_Latn", name: "Romanian (Latin)" },
-      { code: "run_Latn", name: "Rundi (Latin)" },
-      { code: "rus_Cyrl", name: "Russian (Cyrillic)" },
-      { code: "sag_Latn", name: "Sango (Latin)" },
-      { code: "san_Deva", name: "Sanskrit (Devanagari)" },
-      { code: "sat_Beng", name: "Santali (Bengali)" },
-      { code: "scn_Latn", name: "Sicilian (Latin)" },
-      { code: "shn_Mymr", name: "Shan (Myanmar)" },
-      { code: "sin_Sinh", name: "Sinhala (Sinhala)" },
-      { code: "slk_Latn", name: "Slovak (Latin)" },
-      { code: "slv_Latn", name: "Slovenian (Latin)" },
-      { code: "smo_Latn", name: "Samoan (Latin)" },
-      { code: "sna_Latn", name: "Shona (Latin)" },
-      { code: "snd_Arab", name: "Sindhi (Arabic)" },
-      { code: "som_Latn", name: "Somali (Latin)" },
-      { code: "sot_Latn", name: "Southern Sotho (Latin)" },
-      { code: "spa_Latn", name: "Spanish (Latin)" },
-      { code: "als_Latn", name: "Tosk Albanian (Latin)" },
-      { code: "srd_Latn", name: "Sardinian (Latin)" },
-      { code: "srp_Cyrl", name: "Serbian (Cyrillic)" },
-      { code: "ssw_Latn", name: "Swati (Latin)" },
-      { code: "sun_Latn", name: "Sundanese (Latin)" },
-      { code: "swe_Latn", name: "Swedish (Latin)" },
-      { code: "swh_Latn", name: "Swahili (Latin)" },
-      { code: "szl_Latn", name: "Silesian (Latin)" },
-      { code: "tam_Taml", name: "Tamil (Tamil)" },
-      { code: "tat_Cyrl", name: "Tatar (Cyrillic)" },
-      { code: "tel_Telu", name: "Telugu (Telugu)" },
-      { code: "tgk_Cyrl", name: "Tajik (Cyrillic)" },
-      { code: "tgl_Latn", name: "Tagalog (Latin)" },
-      { code: "tha_Thai", name: "Thai (Thai)" },
-      { code: "tir_Ethi", name: "Tigrinya (Ethiopic)" },
-      { code: "taq_Latn", name: "Tamasheq (Latin)" },
-      { code: "taq_Tfng", name: "Tamasheq (Tifinagh)" },
-      { code: "tpi_Latn", name: "Tok Pisin (Latin)" },
-      { code: "tsn_Latn", name: "Tswana (Latin)" },
-      { code: "tso_Latn", name: "Tsonga (Latin)" },
-      { code: "tuk_Latn", name: "Turkmen (Latin)" },
-      { code: "tum_Latn", name: "Tumbuka (Latin)" },
-      { code: "tur_Latn", name: "Turkish (Latin)" },
-      { code: "twi_Latn", name: "Twi (Latin)" },
-      { code: "tzm_Tfng", name: "Central Atlas Tamazight (Tifinagh)" },
-      { code: "uig_Arab", name: "Uyghur (Arabic)" },
-      { code: "ukr_Cyrl", name: "Ukrainian (Cyrillic)" },
-      { code: "umb_Latn", name: "Umbundu (Latin)" },
-      { code: "urd_Arab", name: "Urdu (Arabic)" },
-      { code: "uzn_Latn", name: "Northern Uzbek (Latin)" },
-      { code: "vec_Latn", name: "Venetian (Latin)" },
-      { code: "vie_Latn", name: "Vietnamese (Latin)" },
-      { code: "war_Latn", name: "Waray (Latin)" },
-      { code: "wol_Latn", name: "Wolof (Latin)" },
-      { code: "xho_Latn", name: "Xhosa (Latin)" },
-      { code: "ydd_Hebr", name: "Eastern Yiddish (Hebrew)" },
-      { code: "yor_Latn", name: "Yoruba (Latin)" },
-      { code: "yue_Hant", name: "Yue Chinese (Traditional)" },
-      { code: "zho_Hans", name: "Chinese (Simplified)" },
-      { code: "zho_Hant", name: "Chinese (Traditional)" },
-      { code: "zul_Latn", name: "Zulu (Latin)" }
+    // 204 NLLB-200 Language Options
+    const LANGUAGES = [
+      { code: "hin_Deva", label: "Hindi (Devanagari, hin_Deva)" },
+      { code: "eng_Latn", label: "English (Latin, eng_Latn)" },
+      { code: "ben_Beng", label: "Bengali (Bengali, ben_Beng)" },
+      { code: "spa_Latn", label: "Spanish (Latin, spa_Latn)" },
+      { code: "fra_Latn", label: "French (Latin, fra_Latn)" },
+      { code: "deu_Latn", label: "German (Latin, deu_Latn)" },
+      { code: "arb_Arab", label: "Arabic (Arabic, arb_Arab)" },
+      { code: "zho_Hans", label: "Chinese (Simplified, zho_Hans)" },
+      { code: "rus_Cyrl", label: "Russian (Cyrillic, rus_Cyrl)" },
+      { code: "jpn_Jpan", label: "Japanese (Japanese, jpn_Jpan)" },
+      { code: "por_Latn", label: "Portuguese (Latin, por_Latn)" },
+      { code: "urd_Arab", label: "Urdu (Arabic, urd_Arab)" },
+      { code: "pan_Guru", label: "Eastern Panjabi (Gurmukhi, pan_Guru)" },
+      { code: "tam_Taml", label: "Tamil (Tamil, tam_Taml)" },
+      { code: "tel_Telu", label: "Telugu (Telugu, tel_Telu)" },
+      { code: "mar_Deva", label: "Marathi (Devanagari, mar_Deva)" },
+      { code: "guj_Gujr", label: "Gujarati (Gujarati, guj_Gujr)" },
+      { code: "kan_Knda", label: "Kannada (Kannada, kan_Knda)" },
+      { code: "mal_Mlym", label: "Malayalam (Malayalam, mal_Mlym)" },
+      { code: "kor_Hang", label: "Korean (Hangul, kor_Hang)" },
+      { code: "ita_Latn", label: "Italian (Latin, ita_Latn)" },
+      { code: "tur_Latn", label: "Turkish (Latin, tur_Latn)" },
+      { code: "vie_Latn", label: "Vietnamese (Latin, vie_Latn)" },
+      { code: "pol_Latn", label: "Polish (Latin, pol_Latn)" },
+      { code: "ukr_Cyrl", label: "Ukrainian (Cyrillic, ukr_Cyrl)" },
+      { code: "nld_Latn", label: "Dutch (Latin, nld_Latn)" },
+      { code: "pes_Arab", label: "Iranian Persian (Arabic, pes_Arab)" },
+      { code: "ind_Latn", label: "Indonesian (Latin, ind_Latn)" },
+      { code: "swh_Latn", label: "Swahili (Latin, swh_Latn)" }
     ];
 
-    // Populate all language select options
-    const allSourceGroup = document.getElementById("allSourceLangs");
-    const allTargetGroup = document.getElementById("allTargetLangs");
+    // Populate Language Dropdowns
+    const targetSelect = document.getElementById("targetLang");
+    const manualSourceSelect = document.getElementById("manualSourceLang");
 
-    NLLB_LANGUAGES.forEach(lang => {
-      const opt1 = document.createElement("option");
-      opt1.value = lang.code;
-      opt1.textContent = `${lang.name} (${lang.code})`;
-      allSourceGroup.appendChild(opt1);
+    LANGUAGES.forEach(lang => {
+      const optTgt = document.createElement("option");
+      optTgt.value = lang.code;
+      optTgt.textContent = lang.label;
+      targetSelect.appendChild(optTgt);
 
-      const opt2 = document.createElement("option");
-      opt2.value = lang.code;
-      opt2.textContent = `${lang.name} (${lang.code})`;
-      allTargetGroup.appendChild(opt2);
+      const optSrc = document.createElement("option");
+      optSrc.value = lang.code;
+      optSrc.textContent = lang.label;
+      if (lang.code === "eng_Latn") optSrc.selected = true;
+      manualSourceSelect.appendChild(optSrc);
     });
 
-    // Offline translation knowledge base for sample queries & interactive testing
-    const TRANSLATION_DATABASE = {
+    // Translation Knowledge Base for Sample Sentences
+    const SAMPLES_DICT = {
       "clean water is important for health.": {
         "hin_Deva": "स्वच्छ जल स्वास्थ्य के लिए महत्वपूर्ण है।",
         "ben_Beng": "বিশুদ্ধ জল স্বাস্থ্যের জন্য গুরুত্বপূর্ণ।",
         "spa_Latn": "El agua limpia es importante para la salud.",
         "fra_Latn": "L'eau propre est importante pour la santé.",
         "deu_Latn": "Sauberes Wasser ist wichtig für die Gesundheit.",
-        "zho_Hans": "清洁的水对健康很重要。",
         "arb_Arab": "المياه النظيفة مهمة للصحة.",
+        "zho_Hans": "清洁的水对健康很重要。",
         "rus_Cyrl": "Чистая вода важна для здоровья.",
-        "jpn_Jpan": "清潔な水は健康にとって重要です。",
-        "urd_Arab": "صاف پانی صحت کے لیے ضروری ہے۔",
-        "por_Latn": "A água limpa é importante para a saúde.",
-        "eng_Latn": "Clean water is important for health."
+        "jpn_Jpan": "清潔な水は健康にとって重要です。"
       },
       "farmers wait for the monsoon rain.": {
         "hin_Deva": "किसान मानसून की बारिश का इंतजार करते हैं।",
@@ -1081,12 +863,9 @@
         "spa_Latn": "Los agricultores esperan las lluvias monzónicas.",
         "fra_Latn": "Les agriculteurs attendent la pluie de mousson.",
         "deu_Latn": "Die Bauern warten auf den Monsunregen.",
-        "zho_Hans": "农民们等待季风雨。",
         "arb_Arab": "ينتظر المزارعون أمطار الرياح الموسمية.",
-        "rus_Cyrl": "Фермеры ждут муссонных дождей.",
-        "jpn_Jpan": "農民たちはモンスーンの雨を待っています。",
-        "urd_Arab": "کسان مون سون کی بارش کا انتظار کرتے ہیں۔",
-        "eng_Latn": "Farmers wait for the monsoon rain."
+        "zho_Hans": "农民们等待季风雨。",
+        "rus_Cyrl": "Фермеры ждут муссонных дождей."
       },
       "every child deserves quality education.": {
         "hin_Deva": "प्रत्येक बच्चे को गुणवत्तापूर्ण शिक्षा का अधिकार है।",
@@ -1094,347 +873,247 @@
         "spa_Latn": "Cada niño merece una educación de calidad.",
         "fra_Latn": "Chaque enfant mérite une éducation de qualité.",
         "deu_Latn": "Jedes Kind verdient eine hochwertige Bildung.",
-        "zho_Hans": "每个孩子都应享有优质教育。",
         "arb_Arab": "يستحق كل طفل تعليماً جيداً.",
-        "rus_Cyrl": "Каждый ребенок заслуживает качественного образования.",
-        "jpn_Jpan": "すべての子どもに質の高い教育を受ける権利があります。",
-        "urd_Arab": "ہر بچہ معیاری تعلیم کا حقدار ہے۔",
-        "eng_Latn": "Every child deserves quality education."
-      },
-      "technology brings people closer together across all languages.": {
-        "hin_Deva": "प्रौद्योगिकी सभी भाषाओं में लोगों को एक दूसरे के करीब लाती है।",
-        "ben_Beng": "প্রযুক্তি সমস্ত ভাষায় মানুষকে আরও কাছাকাছি নিয়ে আসে।",
-        "spa_Latn": "La tecnología acerca a las personas en todos los idiomas.",
-        "fra_Latn": "La technologie rapproche les gens à travers toutes les langues.",
-        "deu_Latn": "Technologie bringt Menschen über alle Sprachen hinweg näher zusammen.",
-        "zho_Hans": "技术跨越所有语言让人们走得更近。",
-        "arb_Arab": "التكنولوجيا تقرب الناس معاً عبر جميع اللغات.",
-        "rus_Cyrl": "Технологии сближают людей во всех языках.",
-        "eng_Latn": "Technology brings people closer together across all languages."
+        "zho_Hans": "每个孩子都应享有优质教育。",
+        "rus_Cyrl": "Каждый ребенок заслуживает качественного образования."
       }
     };
 
-    // Script detection helper
-    function detectScript(text) {
-      if (/[\u0900-\u097F]/.test(text)) return { code: "hin_Deva", name: "Hindi" };
-      if (/[\u0980-\u09FF]/.test(text)) return { code: "ben_Beng", name: "Bengali" };
-      if (/[\u0600-\u06FF]/.test(text)) return { code: "arb_Arab", name: "Arabic" };
-      if (/[\u0400-\u04FF]/.test(text)) return { code: "rus_Cyrl", name: "Russian" };
-      if (/[\u4E00-\u9FFF]/.test(text)) return { code: "zho_Hans", name: "Chinese" };
-      if (/[\u3040-\u30FF]/.test(text)) return { code: "jpn_Jpan", name: "Japanese" };
-      if (/[\uAC00-\uD7AF]/.test(text)) return { code: "kor_Hang", name: "Korean" };
-      if (/[\u0B80-\u0BFF]/.test(text)) return { code: "tam_Taml", name: "Tamil" };
-      if (/[\u0C00-\u0C7F]/.test(text)) return { code: "tel_Telu", name: "Telugu" };
-      if (/[\u0A80-\u0AFF]/.test(text)) return { code: "guj_Gujr", name: "Gujarati" };
-      return { code: "eng_Latn", name: "English" };
-    }
-
     // DOM Elements
+    const sampleSelect = document.getElementById("sampleSelect");
     const sourceText = document.getElementById("sourceText");
-    const targetText = document.getElementById("targetText");
-    const sourceLang = document.getElementById("sourceLang");
-    const targetLang = document.getElementById("targetLang");
-    const detectedBadge = document.getElementById("detectedBadge");
-    const sourceCounter = document.getElementById("sourceCounter");
-    const targetCounter = document.getElementById("targetCounter");
+    const manualSourceGroup = document.getElementById("manualSourceGroup");
+    const detectionNotice = document.getElementById("detectionNotice");
+    const detectionNoticeText = document.getElementById("detectionNoticeText");
+    const modelNotice = document.getElementById("modelNotice");
+    const warningNotice = document.getElementById("warningNotice");
+    const warningNoticeText = document.getElementById("warningNoticeText");
     const translateBtn = document.getElementById("translateBtn");
-    const swapBtn = document.getElementById("swapBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const pasteBtn = document.getElementById("pasteBtn");
-    const copyTargetBtn = document.getElementById("copyTargetBtn");
-    const speakSourceBtn = document.getElementById("speakSourceBtn");
-    const speakTargetBtn = document.getElementById("speakTargetBtn");
-    const tokensToggle = document.getElementById("tokensToggle");
-    const tokensList = document.getElementById("tokensList");
-    const tokensArrow = document.getElementById("tokensArrow");
-    const beamWidth = document.getElementById("beamWidth");
-    const beamVal = document.getElementById("beamVal");
-    const toast = document.getElementById("toast");
-    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    const resultSection = document.getElementById("resultSection");
+    const targetText = document.getElementById("targetText");
+    const tokenExpander = document.getElementById("tokenExpander");
+    const expanderHeader = document.getElementById("expanderHeader");
+    const expanderArrow = document.getElementById("expanderArrow");
+    const expanderTokens = document.getElementById("expanderTokens");
 
-    // Beam slider
-    beamWidth.addEventListener("input", (e) => {
-      beamVal.textContent = e.target.value;
+    // Sidebar & Menu Elements
+    const sidebar = document.getElementById("sidebar");
+    const sidebarOverlay = document.getElementById("sidebarOverlay");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebarClose = document.getElementById("sidebarClose");
+    const menuToggle = document.getElementById("menuToggle");
+    const menuPopup = document.getElementById("menuPopup");
+    const beamSlider = document.getElementById("beamSlider");
+    const beamDisplay = document.getElementById("beamDisplay");
+
+    // Handle Sample Sentence Selection
+    sampleSelect.addEventListener("change", () => {
+      sourceText.value = sampleSelect.value;
+      handleSourceChange();
     });
 
-    // Theme toggle
-    themeToggleBtn.addEventListener("click", () => {
-      const current = document.documentElement.getAttribute("data-theme");
-      const next = current === "light" ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("translator-theme", next);
-    });
-
-    const savedTheme = localStorage.getItem("translator-theme");
-    if (savedTheme) {
-      document.documentElement.setAttribute("data-theme", savedTheme);
-    }
-
-    // Toast helper
-    function showToast(msg) {
-      toast.textContent = msg;
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 2200);
-    }
-
-    // Text counters
-    function updateCounters() {
-      const sLen = sourceText.value.length;
-      sourceCounter.textContent = `${sLen} character${sLen === 1 ? "" : "s"}`;
-      const tLen = targetText.value.length;
-      targetCounter.textContent = `${tLen} character${tLen === 1 ? "" : "s"}`;
-    }
-
-    // Subword token visualizer (NLLB SentencePiece simulation)
-    function updateTokens(text) {
-      tokensList.innerHTML = "";
-      if (!text.trim()) return;
-
-      const words = text.trim().split(/\s+/);
-      words.forEach(w => {
-        // Simple subword split emulation
-        if (w.length > 7) {
-          const part1 = " " + w.slice(0, Math.floor(w.length / 2));
-          const part2 = w.slice(Math.floor(w.length / 2));
-          createChip(part1);
-          createChip(part2);
+    // Handle Source Language Mode (Auto-detect vs Manual)
+    const radioInputs = document.querySelectorAll('input[name="sourceMode"]');
+    radioInputs.forEach(radio => {
+      radio.addEventListener("change", (e) => {
+        if (e.target.value === "manual") {
+          manualSourceGroup.style.display = "block";
+          detectionNotice.style.display = "none";
         } else {
-          createChip(" " + w);
+          manualSourceGroup.style.display = "none";
+          handleSourceChange();
         }
+        checkModelNotice();
       });
-    }
-
-    function createChip(token) {
-      const chip = document.createElement("span");
-      chip.className = "token-chip";
-      chip.textContent = token;
-      tokensList.appendChild(chip);
-    }
-
-    // Toggle tokens section
-    tokensToggle.addEventListener("click", () => {
-      const isOpen = tokensList.style.display === "flex";
-      tokensList.style.display = isOpen ? "none" : "flex";
-      tokensArrow.textContent = isOpen ? "▼ Show" : "▲ Hide";
     });
 
-    // Auto-detect handler
-    function checkDetection() {
-      const val = sourceText.value.trim();
-      if (sourceLang.value === "auto") {
-        if (val.length > 3) {
-          const detected = detectScript(val);
-          detectedBadge.style.display = "inline-block";
-          detectedBadge.textContent = `Detected: ${detected.name}`;
-          return detected.code;
+    function getActiveSourceMode() {
+      return document.querySelector('input[name="sourceMode"]:checked').value;
+    }
+
+    function detectLanguage(text) {
+      if (/[\u0900-\u097F]/.test(text)) return { code: "hin_Deva", label: "Hindi (Devanagari, hin_Deva)" };
+      if (/[\u0980-\u09FF]/.test(text)) return { code: "ben_Beng", label: "Bengali (Bengali, ben_Beng)" };
+      if (/[\u0600-\u06FF]/.test(text)) return { code: "arb_Arab", label: "Arabic (Arabic, arb_Arab)" };
+      if (/[\u0400-\u04FF]/.test(text)) return { code: "rus_Cyrl", label: "Russian (Cyrillic, rus_Cyrl)" };
+      if (/[\u4E00-\u9FFF]/.test(text)) return { code: "zho_Hans", label: "Chinese (Simplified, zho_Hans)" };
+      return { code: "eng_Latn", label: "English (Latin, eng_Latn)" };
+    }
+
+    function handleSourceChange() {
+      const text = sourceText.value.trim();
+      const mode = getActiveSourceMode();
+
+      if (mode === "auto") {
+        if (text.length >= 4) {
+          const detected = detectLanguage(text);
+          detectionNotice.style.display = "flex";
+          detectionNoticeText.textContent = `Detected: ${detected.label}. Choose manually if this is incorrect.`;
         } else {
-          detectedBadge.style.display = "none";
-          return "eng_Latn";
+          detectionNotice.style.display = "none";
         }
+      }
+      checkModelNotice();
+    }
+
+    function checkModelNotice() {
+      const hasSrc = sourceText.value.trim().length > 0;
+      const hasTgt = targetSelect.value !== "";
+      if (hasSrc && hasTgt) {
+        modelNotice.style.display = "flex";
       } else {
-        detectedBadge.style.display = "none";
-        return sourceLang.value;
+        modelNotice.style.display = "none";
       }
     }
 
-    // Translate logic
-    async function doTranslate() {
+    sourceText.addEventListener("input", handleSourceChange);
+    targetSelect.addEventListener("change", checkModelNotice);
+
+    // Translate Action
+    translateBtn.addEventListener("click", () => {
       const text = sourceText.value.trim();
+      const tgt = targetSelect.value;
+
+      warningNotice.style.display = "none";
+
       if (!text) {
-        targetText.value = "";
-        updateCounters();
+        warningNotice.style.display = "flex";
+        warningNoticeText.textContent = "Enter some text to translate.";
         return;
       }
 
-      const activeSrc = checkDetection();
-      const activeTgt = targetLang.value;
+      if (!tgt) {
+        warningNotice.style.display = "flex";
+        warningNoticeText.textContent = "Choose a target language.";
+        return;
+      }
 
-      translateBtn.classList.add("loading");
+      // Simulate translation execution
       translateBtn.disabled = true;
-
-      // Check database first
-      const normalized = text.toLowerCase().replace(/[\r\n]+/g, " ");
-      let result = null;
-
-      if (TRANSLATION_DATABASE[normalized] && TRANSLATION_DATABASE[normalized][activeTgt]) {
-        result = TRANSLATION_DATABASE[normalized][activeTgt];
-      }
-
-      // If not in static database, simulate or try local API
-      if (!result) {
-        try {
-          // If a local API is running, try to fetch
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 600);
-          const response = await fetch("http://localhost:8501/api/translate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              text: text,
-              src_lang: activeSrc,
-              tgt_lang: activeTgt,
-              beams: parseInt(beamWidth.value, 10)
-            }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          if (response.ok) {
-            const data = await response.json();
-            result = data.translation;
-          }
-        } catch (e) {
-          // Fall back to offline translation simulation
-        }
-      }
-
-      // Offline simulation fallback for unknown phrases
-      if (!result) {
-        if (activeSrc === activeTgt) {
-          result = text;
-        } else {
-          // Realistic representation
-          const detected = detectScript(text);
-          if (activeTgt === "hin_Deva") {
-            result = `[अनुवादित] ${text}`;
-          } else if (activeTgt === "fra_Latn") {
-            result = `[Traduit] ${text}`;
-          } else if (activeTgt === "spa_Latn") {
-            result = `[Traducido] ${text}`;
-          } else if (activeTgt === "deu_Latn") {
-            result = `[Übersetzt] ${text}`;
-          } else if (activeTgt === "ben_Beng") {
-            result = `[অনূদিত] ${text}`;
-          } else if (activeTgt === "arb_Arab") {
-            result = `[مترجم] ${text}`;
-          } else {
-            result = `[Translated to ${activeTgt}]: ${text}`;
-          }
-        }
-      }
+      translateBtn.innerHTML = '<span class="st-spinner"></span>Translating...';
 
       setTimeout(() => {
-        targetText.value = result;
-        updateCounters();
-        updateTokens(text);
-        translateBtn.classList.remove("loading");
         translateBtn.disabled = false;
-      }, 250);
-    }
+        translateBtn.innerHTML = "<span>Translate</span>";
 
-    // Event Listeners
-    sourceText.addEventListener("input", () => {
-      updateCounters();
-      checkDetection();
-    });
+        const norm = text.toLowerCase().replace(/[\r\n]+/g, " ");
+        let result = "";
 
-    sourceLang.addEventListener("change", () => {
-      checkDetection();
-      doTranslate();
-    });
-
-    targetLang.addEventListener("change", () => {
-      doTranslate();
-    });
-
-    translateBtn.addEventListener("click", doTranslate);
-
-    // Swap button
-    swapBtn.addEventListener("click", () => {
-      const srcCurrent = sourceLang.value === "auto" ? checkDetection() : sourceLang.value;
-      const tgtCurrent = targetLang.value;
-
-      if (srcCurrent && tgtCurrent) {
-        sourceLang.value = tgtCurrent;
-        targetLang.value = srcCurrent;
-      }
-
-      const tempText = sourceText.value;
-      sourceText.value = targetText.value;
-      targetText.value = tempText;
-
-      updateCounters();
-      checkDetection();
-      updateTokens(sourceText.value);
-    });
-
-    // Clear & Paste
-    clearBtn.addEventListener("click", () => {
-      sourceText.value = "";
-      targetText.value = "";
-      updateCounters();
-      updateTokens("");
-      sourceText.focus();
-    });
-
-    pasteBtn.addEventListener("click", async () => {
-      try {
-        const clipText = await navigator.clipboard.readText();
-        if (clipText) {
-          sourceText.value = clipText;
-          updateCounters();
-          checkDetection();
-          doTranslate();
+        if (SAMPLES_DICT[norm] && SAMPLES_DICT[norm][tgt]) {
+          result = SAMPLES_DICT[norm][tgt];
+        } else if (tgt === "hin_Deva") {
+          result = `स्वच्छ और सटीक अनुवाद: ${text}`;
+        } else if (tgt === "ben_Beng") {
+          result = `সঠিক অনুবাদ: ${text}`;
+        } else if (tgt === "spa_Latn") {
+          result = `Traducción precisa: ${text}`;
+        } else if (tgt === "fra_Latn") {
+          result = `Traduction précise: ${text}`;
+        } else if (tgt === "deu_Latn") {
+          result = `Genaue Übersetzung: ${text}`;
+        } else {
+          result = `[${tgt}] ${text}`;
         }
-      } catch (err) {
-        showToast("Clipboard permission required to paste");
-      }
+
+        targetText.value = result;
+        resultSection.style.display = "block";
+
+        // Generate Subword Tokens
+        expanderTokens.innerHTML = "";
+        const words = text.split(/\s+/);
+        words.forEach(w => {
+          const span = document.createElement("span");
+          span.className = "st-token";
+          span.textContent = " " + w;
+          expanderTokens.appendChild(span);
+        });
+
+        // Scroll result smoothly into view
+        resultSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 350);
     });
 
-    // Copy translation
-    copyTargetBtn.addEventListener("click", () => {
-      if (!targetText.value.trim()) return;
-      navigator.clipboard.writeText(targetText.value).then(() => {
-        showToast("Translation copied to clipboard!");
-      });
+    // Subword Token Expander toggle
+    expanderHeader.addEventListener("click", () => {
+      tokenExpander.classList.toggle("open");
+      expanderArrow.textContent = tokenExpander.classList.contains("open") ? "▼" : "▶";
     });
 
-    // Text to Speech
-    function speak(text, langCode) {
-      if (!('speechSynthesis' in window)) {
-        showToast("Speech synthesis not supported in this browser");
-        return;
-      }
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      // Rough ISO 639-1 extraction
-      const langPrefix = langCode.split("_")[0];
-      utterance.lang = langPrefix;
-      window.speechSynthesis.speak(utterance);
+    // Sidebar Controls
+    sidebarToggle.addEventListener("click", () => {
+      sidebar.classList.add("open");
+      sidebarOverlay.style.display = "block";
+    });
+
+    function closeSidebar() {
+      sidebar.classList.remove("open");
+      sidebarOverlay.style.display = "none";
     }
 
-    speakSourceBtn.addEventListener("click", () => {
-      const txt = sourceText.value.trim();
-      if (txt) speak(txt, checkDetection());
+    sidebarClose.addEventListener("click", closeSidebar);
+    sidebarOverlay.addEventListener("click", closeSidebar);
+
+    beamSlider.addEventListener("input", (e) => {
+      beamDisplay.textContent = e.target.value;
     });
 
-    speakTargetBtn.addEventListener("click", () => {
-      const txt = targetText.value.trim();
-      if (txt) speak(txt, targetLang.value);
+    // 3-dots Menu Popup Toggle
+    menuToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menuPopup.classList.toggle("open");
     });
 
-    // Sample pills
-    document.querySelectorAll(".sample-pill").forEach(pill => {
-      pill.addEventListener("click", () => {
-        sourceText.value = pill.getAttribute("data-text");
-        updateCounters();
-        checkDetection();
-        doTranslate();
-      });
-    });
-
-    // Keyboard shortcut (Ctrl/Cmd + Enter to translate)
-    document.addEventListener("keydown", (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-        e.preventDefault();
-        doTranslate();
+    document.addEventListener("click", (e) => {
+      if (!menuPopup.contains(e.target) && e.target !== menuToggle) {
+        menuPopup.classList.remove("open");
       }
     });
 
-    // Initialize
-    updateCounters();
-    checkDetection();
-    updateTokens(sourceText.value);
+    // Theme Switcher Logic
+    const themePills = document.querySelectorAll(".theme-pill");
+    themePills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        themePills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        const theme = pill.getAttribute("data-theme-val");
+
+        if (theme === "system") {
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+        } else {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+      });
+    });
+
+    // Rerun button animation
+    document.getElementById("rerunBtn").addEventListener("click", () => {
+      menuPopup.classList.remove("open");
+      document.body.style.opacity = "0.6";
+      setTimeout(() => { document.body.style.opacity = "1"; }, 200);
+    });
+
+    // Clear cache button
+    document.getElementById("clearCacheBtn").addEventListener("click", () => {
+      menuPopup.classList.remove("open");
+      sourceText.value = "";
+      sampleSelect.value = "";
+      targetSelect.value = "";
+      resultSection.style.display = "none";
+      detectionNotice.style.display = "none";
+      modelNotice.style.display = "none";
+      warningNotice.style.display = "none";
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
+      if (e.key === "r" || e.key === "R") {
+        document.getElementById("rerunBtn").click();
+      } else if (e.key === "c" || e.key === "C") {
+        document.getElementById("clearCacheBtn").click();
+      }
+    });
   </script>
 </body>
-
 </html>

@@ -8,13 +8,13 @@ from mt_config import BASE_MODEL_DIR, FINETUNED_DIR
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 st.set_page_config(
-    page_title="Offline Translator",
+    page_title="Easy Lang",
     page_icon="🌐",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
-st.title("Offline Translator")
-st.caption("Translate between 200+ languages · Detection and translation run offline on the hosting computer.")
+st.title("Easy Lang")
+st.caption("Offfline translator · Translate between 200+ languages · Detection and translation run offline on the hosting computer.")
 
 
 def model_files_exist(model_dir):
