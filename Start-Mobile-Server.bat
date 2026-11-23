@@ -1,4 +1,4 @@
 @echo off
-title Easy Lang - Mobile & PC App Server
-python "%~dp0serve_mobile.py"
+cd /d "%~dp0"
+python api_server.py
 pause
