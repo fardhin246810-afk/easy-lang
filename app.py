@@ -3,7 +3,7 @@ import streamlit as st
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 from language_support import detect_nllb_language, get_language_labels, get_supported_language_codes
-from mt_config import BASE_MODEL_DIR, FINETUNED_DIR, ROOT_DIR
+from mt_config import BASE_MODEL_DIR, FINETUNED_DIR, ROOT_DIR, SRC_LANG, TGT_LANG
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
