@@ -107,4 +107,4 @@ def detect_nllb_language(text, supported_codes):
     preferred = PREFERRED_LANGUAGE_VARIANTS.get(detected_code)
     if preferred in candidates:
         return preferred
-    return candidates[0] if candidates else None
+    return sorted(candidates)[0] if candidates else None
