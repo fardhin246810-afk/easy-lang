@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Easy Lang · Offfline translator</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
   <style>
     :root {
       --bg-color: #0e1117;
@@ -65,6 +66,172 @@
       line-height: 1.5;
     }
 
+    /* ========================================================
+       PRO OPENING SPLASH SCREEN
+       ======================================================== */
+    .st-splash-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #0e1117;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+
+    .st-splash-overlay.fade-out {
+      opacity: 0;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+
+    .st-splash-glow {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(255, 75, 75, 0.2) 0%, rgba(255, 75, 75, 0.05) 45%, transparent 70%);
+      pointer-events: none;
+      animation: splashGlowPulse 2.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes splashGlowPulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      100% { transform: scale(1.15); opacity: 1; }
+    }
+
+    .st-splash-card {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: splashCardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes splashCardEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.92);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .st-splash-logo-container {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .st-splash-ring {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      right: -6px;
+      bottom: -6px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 75, 75, 0.3);
+      box-shadow: 0 0 25px rgba(255, 75, 75, 0.35);
+      animation: splashRingRotate 4s linear infinite;
+    }
+
+    @keyframes splashRingRotate {
+      0% { transform: rotate(0deg); border-color: rgba(255, 75, 75, 0.4); }
+      50% { border-color: rgba(255, 75, 75, 0.8); }
+      100% { transform: rotate(360deg); border-color: rgba(255, 75, 75, 0.4); }
+    }
+
+    .st-splash-logo-img {
+      width: 110px;
+      height: 110px;
+      border-radius: 28px;
+      object-fit: cover;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 75, 75, 0.25);
+      animation: splashLogoPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes splashLogoPop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .st-splash-brand {
+      margin-bottom: 1.75rem;
+    }
+
+    .st-splash-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #fafafa;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .st-splash-subtitle {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .st-splash-loader-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.65rem;
+      width: 220px;
+    }
+
+    .st-splash-track {
+      width: 100%;
+      height: 3.5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .st-splash-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, #ff4b4b 0%, #ff8080 100%);
+      border-radius: 9999px;
+      box-shadow: 0 0 10px #ff4b4b;
+      animation: splashBarSweep 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes splashBarSweep {
+      0% { left: -40%; width: 30%; }
+      50% { width: 55%; }
+      100% { left: 100%; width: 30%; }
+    }
+
+    .st-splash-status {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
+      font-family: inherit;
+      transition: opacity 0.2s;
+    }
+
     /* Top Navigation Bar */
     .st-header {
       height: 52px;
@@ -81,6 +248,15 @@
     .st-header-left {
       display: flex;
       align-items: center;
+      gap: 0.65rem;
+    }
+
+    .st-header-brand-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
     .st-header-right {
@@ -296,13 +472,27 @@
       flex: 1;
     }
 
-    /* Streamlit Title & Headers */
+    /* Streamlit Title with Logo Integration */
+    .st-title-brand-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .st-page-logo-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+
     .st-title {
       font-size: 2.35rem;
       font-weight: 700;
       color: var(--text-color);
-      line-height: 1.25;
-      margin-bottom: 0.15rem;
+      line-height: 1.2;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -578,6 +768,27 @@
 </head>
 <body>
 
+  <!-- Pro Opening Splash Screen -->
+  <div id="splashScreen" class="st-splash-overlay">
+    <div class="st-splash-glow"></div>
+    <div class="st-splash-card">
+      <div class="st-splash-logo-container">
+        <div class="st-splash-ring"></div>
+        <img src="assets/logo.png" alt="Easy Lang Logo" class="st-splash-logo-img">
+      </div>
+      <div class="st-splash-brand">
+        <h1 class="st-splash-title">Easy Lang</h1>
+        <div class="st-splash-subtitle">Offfline translator</div>
+      </div>
+      <div class="st-splash-loader-wrap">
+        <div class="st-splash-track">
+          <div class="st-splash-bar"></div>
+        </div>
+        <div class="st-splash-status" id="splashStatus">Initializing offline neural engine...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Top Streamlit Navigation Bar -->
   <header class="st-header">
     <div class="st-header-left">
@@ -588,6 +799,7 @@
           <polyline points="6 17 11 12 6 7"></polyline>
         </svg>
       </button>
+      <img src="assets/logo.png" alt="Easy Lang Logo" class="st-header-brand-icon" title="Easy Lang">
     </div>
 
     <div class="st-header-right">
@@ -685,14 +897,17 @@
 
   <!-- Centered Streamlit Content -->
   <main class="st-container">
-    <!-- Title -->
-    <h1 class="st-title">
-      <span>Easy Lang</span>
-      <span class="st-anchor" title="Copy anchor link">🔗</span>
-    </h1>
-
-    <!-- Subtitle requested -->
-    <div class="st-subtitle">Offfline translator</div>
+    <!-- Title Brand Header -->
+    <div class="st-title-brand-row">
+      <img src="assets/logo.png" alt="Easy Lang Logo" class="st-page-logo-img">
+      <div>
+        <h1 class="st-title">
+          <span>Easy Lang</span>
+          <span class="st-anchor" title="Copy anchor link">🔗</span>
+        </h1>
+        <div class="st-subtitle">Offfline translator</div>
+      </div>
+    </div>
 
     <!-- Caption line from original Streamlit app -->
     <div class="st-caption">
@@ -794,6 +1009,38 @@
   </main>
 
   <script>
+    // ==========================================
+    // SPLASH SCREEN LOGIC
+    // ==========================================
+    const splashScreen = document.getElementById("splashScreen");
+    const splashStatus = document.getElementById("splashStatus");
+
+    function runSplashScreen(duration = 1750) {
+      splashScreen.style.display = "flex";
+      splashScreen.classList.remove("fade-out");
+      splashStatus.textContent = "Initializing offline neural engine...";
+
+      setTimeout(() => {
+        splashStatus.textContent = "Loading NLLB-200 multilingual model...";
+      }, 650);
+
+      setTimeout(() => {
+        splashStatus.textContent = "Local engine ready";
+      }, 1250);
+
+      setTimeout(() => {
+        splashScreen.classList.add("fade-out");
+        setTimeout(() => {
+          splashScreen.style.display = "none";
+        }, 450);
+      }, duration);
+    }
+
+    // Run on initial load
+    window.addEventListener("DOMContentLoaded", () => {
+      runSplashScreen(1800);
+    });
+
     // 204 NLLB-200 Language Options
     const LANGUAGES = [
       { code: "hin_Deva", label: "Hindi (Devanagari, hin_Deva)" },
@@ -1086,11 +1333,10 @@
       });
     });
 
-    // Rerun button animation
+    // Rerun button animation (triggers splash screen replay)
     document.getElementById("rerunBtn").addEventListener("click", () => {
       menuPopup.classList.remove("open");
-      document.body.style.opacity = "0.6";
-      setTimeout(() => { document.body.style.opacity = "1"; }, 200);
+      runSplashScreen(1400);
     });
 
     // Clear cache button

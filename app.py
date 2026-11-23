@@ -3,17 +3,22 @@ import streamlit as st
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 from language_support import detect_nllb_language, get_language_labels, get_supported_language_codes
-from mt_config import BASE_MODEL_DIR, FINETUNED_DIR
+from mt_config import BASE_MODEL_DIR, FINETUNED_DIR, ROOT_DIR
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 st.set_page_config(
     page_title="Easy Lang",
-    page_icon="🌐",
+    page_icon="assets/logo.png" if (ROOT_DIR / "assets" / "logo.png").is_file() else "🌐",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
-st.title("Easy Lang")
+col_logo, col_title = st.columns([1, 8])
+with col_logo:
+    if (ROOT_DIR / "assets" / "logo.png").is_file():
+        st.image(str(ROOT_DIR / "assets" / "logo.png"), width=56)
+with col_title:
+    st.title("Easy Lang")
 st.caption("Offfline translator · Translate between 200+ languages · Detection and translation run offline on the hosting computer.")
 
 
