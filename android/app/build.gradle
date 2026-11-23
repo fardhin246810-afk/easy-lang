@@ -1,41 +1,38 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
-    compileSdkVersion 34
+    namespace 'com.example.easylang'
+    compileSdk 35
+
     defaultConfig {
-        applicationId "com.example.easylang"
-        minSdkVersion 24
-        targetSdkVersion 34
-        versionCode 1
-        versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a"
-        }
-        // We'll copy the ONNX model to the files directory at runtime
+        applicationId 'com.example.easylang'
+        minSdk 24
+        targetSdk 35
+        versionCode 2
+        versionName '1.1'
     }
+
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+        }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
         }
     }
-    packagingOptions {
-        exclude "META-INF/LICENSE*"
-        exclude "META-INF/NOTICE*"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
-    implementation "androidx.appcompat:appcompat:1.7.0"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
-    implementation "androidx.webkit:webkit:1.8.0"
-    // ONNX Runtime Mobile (offline dependency – Gradle will need internet once to fetch)
-    implementation "com.microsoft.onnxruntime:onnxruntime-mobile:1.17.0"
-    // SentencePiece Java binding (works on Android)
-    implementation "com.github.google.sentencepiece:sentencepiece-android:0.2.0"
+    implementation 'androidx.appcompat:appcompat:1.7.0'
 }
